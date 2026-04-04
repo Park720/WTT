@@ -2,8 +2,8 @@
 Final Project CGT390
 
 _Created By:_
-Junhyung Park 
-Zhouzhou Ji 
+Junhyung Park, 
+Zhouzhou Ji,
 Spencer G Burse 
 
 

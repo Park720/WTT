@@ -1,0 +1,13 @@
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+  user-select: none;
+}
+
+.ring {
+  box-shadow: 0 0 0 2px #ffffff;
+}

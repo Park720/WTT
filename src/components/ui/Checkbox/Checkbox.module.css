@@ -1,0 +1,35 @@
+.box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  border: 1px solid var(--slate-300);
+  background: #ffffff;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.box:hover {
+  border-color: var(--slate-400);
+}
+
+.brand {
+  background: var(--brand-500);
+  border-color: var(--brand-500);
+}
+
+.emerald {
+  background: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.check path {
+  stroke-dasharray: 20;
+  animation: drawCheck 0.25s ease forwards;
+}

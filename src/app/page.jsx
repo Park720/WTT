@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import { Avatar, AvatarStack, StatusPill, PriorityDot, Icon, Logo } from '@/components/ui';
 
-// ── Static demo data ─────────────────────────────────────────────────────────
-
 const DEMO = {
   u1: { id: 'u1', name: 'Mira Osei',        hue: 22,  initials: 'MO' },
   u2: { id: 'u2', name: 'Dao Nguyen',       hue: 200, initials: 'DN' },
@@ -48,8 +46,6 @@ const TONE_ICON = {
   violet:  'bg-violet-50 text-violet-600',
   slate:   'bg-slate-100 text-slate-600',
 };
-
-// ── Sub-components ────────────────────────────────────────────────────────────
 
 function HeroKanbanPreview() {
   return (

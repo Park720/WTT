@@ -6,6 +6,7 @@ import { signOut } from 'next-auth/react';
 import { useMemo, useState, useEffect } from 'react';
 import { Avatar, Icon, Logo } from '@/components/ui';
 import { useToast } from '@/components/Toaster';
+import styles from './Sidebar.module.css';
 
 const APP_NAV = [
   { key: 'dashboard', label: 'Dashboard', icon: 'Home',     href: '/dashboard' },
@@ -16,25 +17,35 @@ const APP_NAV = [
 
 function NavItem({ icon, label, href, active, disabled, onClick }) {
   const IconCmp = Icon[icon];
+  const className = [
+    styles.navItem,
+    active ? styles.navItemActive : '',
+    disabled ? styles.navItemDisabled : '',
+  ].filter(Boolean).join(' ');
+
   const content = (
     <>
-      <IconCmp className="w-4 h-4 shrink-0" />
-      <span className="font-medium">{label}</span>
-      {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-orange-400" />}
+      <IconCmp className={styles.navItemIcon} />
+      <span className={styles.navItemLabel}>{label}</span>
+      {active && <span className={styles.activeDot} />}
     </>
   );
-  const cls = `w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition-colors
-    ${active ? 'bg-white/10 text-white' : disabled ? 'text-slate-500 cursor-not-allowed' : 'text-slate-300 hover:bg-white/5 hover:text-white'}`;
 
   if (disabled || !href) {
     return (
-      <button type="button" onClick={onClick} className={cls} disabled={disabled} title={disabled ? 'Open a project to access this view' : undefined}>
+      <button
+        type="button"
+        onClick={onClick}
+        className={className}
+        disabled={disabled}
+        title={disabled ? 'Open a project to access this view' : undefined}
+      >
         {content}
       </button>
     );
   }
   return (
-    <Link href={href} className={cls}>
+    <Link href={href} className={className}>
       {content}
     </Link>
   );
@@ -45,7 +56,6 @@ export default function Sidebar({ user, projects = [] }) {
   const toast = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // ⌘/Ctrl+K — opens search (placeholder until the command palette ships)
   useEffect(() => {
     const handler = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -81,50 +91,40 @@ export default function Sidebar({ user, projects = [] }) {
   const firstName = user.name?.split(' ')[0] ?? user.email.split('@')[0];
 
   return (
-    <aside className="w-[232px] bg-slate-900 text-slate-100 shrink-0 sticky top-0 h-screen flex flex-col">
-      <div className="px-4 py-4 flex items-center">
+    <aside className={styles.sidebar}>
+      <div className={styles.header}>
         <Link href="/dashboard">
           <Logo size={16} dark />
         </Link>
       </div>
 
-      <div className="px-3 mt-1">
-        <button
-          type="button"
-          onClick={handleSearchClick}
-          className="w-full flex items-center gap-2 px-2.5 py-1.5 text-[13px] rounded-lg bg-white/5 hover:bg-white/10 text-slate-300"
-        >
-          <Icon.Search className="w-3.5 h-3.5" />
-          <span className="text-slate-400">Search</span>
-          <kbd className="ml-auto font-mono text-[10px] text-slate-500 bg-white/5 px-1.5 py-0.5 rounded">⌘K</kbd>
+      <div className={styles.searchWrap}>
+        <button type="button" onClick={handleSearchClick} className={styles.searchButton}>
+          <Icon.Search className={styles.navItemIcon} style={{ width: 14, height: 14 }} />
+          <span className={styles.searchLabel}>Search</span>
+          <kbd className={styles.kbd}>⌘K</kbd>
         </button>
       </div>
 
-      <nav className="mt-4 flex-1 px-2 space-y-0.5 overflow-y-auto nice-scroll">
+      <nav className={`${styles.nav} nice-scroll`}>
         {navItems.map(({ key, ...rest }) => (
           <NavItem key={key} {...rest} />
         ))}
 
         {projects.length > 0 && (
           <>
-            <div className="mt-5 mb-1 px-3 text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">
-              Projects
-            </div>
-            <div className="space-y-0.5">
+            <div className={styles.sectionTitle}>Projects</div>
+            <div className={styles.projectList}>
               {projects.slice(0, 8).map((p) => {
                 const active = activeProjectId === p.id;
                 return (
                   <Link
                     key={p.id}
                     href={`/project/${p.id}/planner`}
-                    className={`w-full flex items-center gap-2 px-3 py-1.5 text-[13px] rounded-lg text-left truncate
-                      ${active ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-slate-300'}`}
+                    className={`${styles.projectItem}${active ? ` ${styles.projectItemActive}` : ''}`}
                   >
-                    <span
-                      className="w-2 h-2 rounded-full shrink-0"
-                      style={{ background: p.color }}
-                    />
-                    <span className="truncate">{p.name}</span>
+                    <span className={styles.projectDot} style={{ background: p.color }} />
+                    <span className={styles.projectName}>{p.name}</span>
                   </Link>
                 );
               })}
@@ -133,26 +133,22 @@ export default function Sidebar({ user, projects = [] }) {
         )}
       </nav>
 
-      <div className="px-2 pb-3 space-y-0.5 relative">
-        <button
-          type="button"
-          onClick={() => setMenuOpen((o) => !o)}
-          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/5 text-left"
-        >
+      <div className={styles.footer}>
+        <button type="button" onClick={() => setMenuOpen((o) => !o)} className={styles.userButton}>
           <Avatar user={{ name: firstName, email: user.email }} size={28} />
-          <div className="min-w-0">
-            <div className="text-[13px] font-medium text-white truncate">{user.name ?? firstName}</div>
-            <div className="text-[11px] text-slate-400 font-mono truncate">{user.email}</div>
+          <div className={styles.userInfo}>
+            <div className={styles.userName}>{user.name ?? firstName}</div>
+            <div className={styles.userEmail}>{user.email}</div>
           </div>
-          <Icon.Chev className="w-3.5 h-3.5 text-slate-500 -rotate-90 shrink-0" />
+          <Icon.Chev className={styles.chev} />
         </button>
 
         {menuOpen && (
-          <div className="absolute left-2 right-2 bottom-14 rounded-xl bg-slate-800 border border-white/10 shadow-lift py-1 text-[13px] z-50">
+          <div className={styles.menu}>
             <button
               type="button"
               onClick={() => signOut({ callbackUrl: '/' })}
-              className="w-full text-left px-3 py-2 hover:bg-white/5 text-slate-200"
+              className={styles.menuItem}
             >
               Sign out
             </button>

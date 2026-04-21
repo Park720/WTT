@@ -1,15 +1,6 @@
 import prisma from '@/lib/prisma';
 import { notify } from '@/lib/notifications';
 
-/**
- * Update a task's status and cascade side effects.
- *
- * On DONE:
- *   1. For each task that lists this one as a blocker, re-check its blockers —
- *      if all are now DONE, flip isBlocked = false.
- *   2. If this task has a parent and all non-deleted siblings are DONE, the
- *      parent is auto-completed (recursively).
- */
 export async function applyStatusChange(taskId, newStatus) {
   const task = await prisma.task.update({
     where: { id: taskId },
@@ -67,11 +58,6 @@ export async function applyStatusChange(taskId, newStatus) {
   return task;
 }
 
-/**
- * Detect whether adding a dependency (dependent depends on blocker) would
- * create a cycle. Walks the dependency graph outward from `blockerId` and
- * checks whether `dependentId` is reachable.
- */
 export async function wouldCreateCycle(dependentId, blockerId) {
   if (dependentId === blockerId) return true;
   const visited = new Set([blockerId]);

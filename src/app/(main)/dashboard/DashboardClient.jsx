@@ -14,8 +14,6 @@ const COLOR_SWATCHES = [
   '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899',
 ];
 
-// ── Formatting helpers ───────────────────────────────────────────────────────
-
 function greetingForHour(h) {
   return h < 12 ? 'Morning' : h < 17 ? 'Afternoon' : 'Evening';
 }
@@ -47,8 +45,6 @@ function isoWeek(d = new Date()) {
   const yearStart = new Date(Date.UTC(tmp.getUTCFullYear(), 0, 1));
   return Math.ceil((((tmp - yearStart) / 86400000) + 1) / 7);
 }
-
-// ── Sub-components ────────────────────────────────────────────────────────────
 
 function DueTag({ iso }) {
   if (!iso) {
@@ -346,8 +342,6 @@ function NewProjectModal({ onClose, onCreated }) {
   );
 }
 
-// ── Main client component ────────────────────────────────────────────────────
-
 export default function DashboardClient({ user, projects }) {
   const router = useRouter();
   const [filter, setFilter] = useState('All');
@@ -400,7 +394,6 @@ export default function DashboardClient({ user, projects }) {
   return (
     <div>
       <div className="px-8 py-6 max-w-[1400px] mx-auto">
-        {/* Header */}
         <div className="flex items-end justify-between mb-2">
           <div>
             <div className="text-[12px] font-mono text-slate-500">{dateLabel} · Week {week}</div>
@@ -428,7 +421,6 @@ export default function DashboardClient({ user, projects }) {
           </div>
         </div>
 
-        {/* KPI strip */}
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
           {kpiCards.map((kpi) => (
             <div key={kpi.k} className="rounded-2xl p-4 border bg-white border-slate-200">
@@ -441,7 +433,6 @@ export default function DashboardClient({ user, projects }) {
           ))}
         </div>
 
-        {/* Filter row */}
         <div className="mt-8 mb-4 flex items-center gap-2">
           <div className="flex items-center p-1 rounded-xl bg-slate-100">
             {FILTERS.map((f) => (
@@ -461,7 +452,6 @@ export default function DashboardClient({ user, projects }) {
           </div>
         </div>
 
-        {/* Project grid */}
         {filtered.length === 0 && projects.length === 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <EmptyProjectCard onClick={() => setShowNew(true)} />

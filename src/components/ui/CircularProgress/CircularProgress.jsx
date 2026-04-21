@@ -1,3 +1,5 @@
+import styles from './CircularProgress.module.css';
+
 export default function CircularProgress({
   value = 0,
   size = 44,
@@ -12,8 +14,8 @@ export default function CircularProgress({
   const off = c - (value / 100) * c;
 
   return (
-    <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="-rotate-90">
+    <div className={styles.wrapper} style={{ width: size, height: size }}>
+      <svg width={size} height={size} className={styles.ring}>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={track} strokeWidth={stroke} />
         <circle
           cx={size / 2} cy={size / 2} r={r}
@@ -21,16 +23,12 @@ export default function CircularProgress({
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={off}
-          style={{ transition: 'stroke-dashoffset .5s ease' }}
+          className={styles.arc}
         />
       </svg>
-      <div className="absolute inset-0 flex items-center justify-center flex-col leading-none">
-        {label !== undefined && (
-          <span className="font-mono text-[11px] font-medium text-slate-800">{label}</span>
-        )}
-        {sub && (
-          <span className="font-mono text-[9px] text-slate-500 mt-0.5">{sub}</span>
-        )}
+      <div className={styles.label}>
+        {label !== undefined && <span className={styles.value}>{label}</span>}
+        {sub && <span className={styles.sub}>{sub}</span>}
       </div>
     </div>
   );

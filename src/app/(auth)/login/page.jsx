@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Avatar, AvatarStack, StatusPill, Checkbox, Icon, Logo } from '@/components/ui';
 
-// Static demo users for the testimonial panel
 const MIRA = { id: 'u1', name: 'Mira Osei',      hue: 22,  initials: 'MO' };
 const DAO  = { id: 'u2', name: 'Dao Nguyen',     hue: 200, initials: 'DN' };
 const INES = { id: 'u3', name: 'Ines Koskinen',  hue: 318, initials: 'IK' };
@@ -95,7 +94,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex">
-      {/* ── Left: form ──────────────────────────────────── */}
       <div className="flex-1 flex items-center justify-center p-6 relative">
         <Link href="/" className="absolute top-6 left-6">
           <Logo />
@@ -103,7 +101,6 @@ export default function LoginPage() {
 
         <div className="w-full max-w-[400px]">
           <div className="rounded-3xl bg-white border border-slate-200 shadow-lift p-8">
-            {/* Mode toggle */}
             <div className="flex items-center p-1 rounded-xl bg-slate-100 mb-6">
               {['login', 'register'].map((m) => (
                 <button
@@ -198,7 +195,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ── Right: vibe panel ───────────────────────────── */}
       <div className="hidden lg:flex flex-1 items-center justify-center relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-slate-100 border-l border-slate-200">
         <div className="absolute inset-0 grain opacity-50" />
         <div className="relative max-w-md p-10">
@@ -216,7 +212,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Decorative task cards */}
           <div className="mt-10 rounded-2xl bg-white border border-slate-200 p-4 shadow-lift rotate-[-1.5deg]">
             <div className="flex items-center gap-2 mb-2">
               <StatusPill status="IN_PROGRESS" size="sm" />

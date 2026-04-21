@@ -14,9 +14,7 @@ function RoleBadge({ role }) {
   return <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">Member</span>;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 // Invite modal
-// ─────────────────────────────────────────────────────────────────────────────
 
 function InviteMemberModal({ projectId, onClose, onInvited }) {
   useEscape(onClose);
@@ -109,9 +107,7 @@ function InviteMemberModal({ projectId, onClose, onInvited }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 // Member row
-// ─────────────────────────────────────────────────────────────────────────────
 
 function MemberRow({ m, projectId, currentUserId, isOwner, onMutate }) {
   const [pendingJob, setPendingJob] = useState(false);
@@ -215,9 +211,7 @@ function MemberRow({ m, projectId, currentUserId, isOwner, onMutate }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 // Members modal (list + invite entry)
-// ─────────────────────────────────────────────────────────────────────────────
 
 export default function MembersModal({
   projectId, projectName, currentUser, isOwner, members, onClose, onUpdate,

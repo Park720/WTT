@@ -34,14 +34,8 @@ function countSubtasksDone(task) {
   return { done, total: task.subtasks.length };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Manager view
-// ─────────────────────────────────────────────────────────────────────────────
-
-// Wraps an inner handler so clicks don't bubble to the card-level open-detail.
 const stopThen = (fn) => (e) => { e.stopPropagation(); return fn(e); };
 
-// Keyboard handler factory: Enter/Space fire the same click as the mouse.
 const keyboardClick = (fn) => (e) => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(e); }
 };
@@ -204,10 +198,6 @@ function ManagerCard({ t, onApprove, onReject, onBin, onAddSubtask, onOpenTask, 
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Member view
-// ─────────────────────────────────────────────────────────────────────────────
-
 function MemberChecklistCard({ t, currentUser, isOwner, onRequestReview, onApprove, onToggleStart, onOpenTask }) {
   const { done, total } = countSubtasksDone(t);
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
@@ -314,10 +304,6 @@ function MemberChecklistCard({ t, currentUser, isOwner, onRequestReview, onAppro
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Bin view
-// ─────────────────────────────────────────────────────────────────────────────
-
 function BinList({ tree, isOwner, onRestore }) {
   const all = tree.flatMap((t) => [t, ...t.subtasks]);
   if (all.length === 0) {
@@ -354,9 +340,6 @@ function BinList({ tree, isOwner, onRestore }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Main
-// ─────────────────────────────────────────────────────────────────────────────
 
 export default function PlannerClient({
   currentUser, project, isOwner,
@@ -377,7 +360,6 @@ export default function PlannerClient({
   const [currentMembers, setCurrentMembers] = useState(members);
   const [busy, setBusy] = useState(false);
 
-  // Task detail modal — can be opened from task click OR ?task=id query param
   const urlTaskId = searchParams.get('task');
   const [detailTaskId, setDetailTaskId] = useState(urlTaskId);
 
@@ -392,7 +374,6 @@ export default function PlannerClient({
   function closeTaskDetail() {
     setDetailTaskId(null);
     if (urlTaskId) {
-      // Remove the ?task= param without triggering a navigation reset
       router.replace(pathname, { scroll: false });
     }
   }
@@ -412,7 +393,6 @@ export default function PlannerClient({
   useEffect(() => {
     if (firstMount.current) { firstMount.current = false; return; }
     refresh(showBin);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showBin]);
 
   async function mutate(fn) {
@@ -476,7 +456,6 @@ export default function PlannerClient({
 
   return (
     <div className="flex">
-      {/* ── Planner sidebar ─────────────────────────────────────────── */}
       <aside className="w-[240px] shrink-0 border-r border-slate-200 bg-white p-4 min-h-[calc(100vh-56px)]">
         <div className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-500">Time</div>
         <div className="mt-2 flex flex-col gap-1">
@@ -524,7 +503,6 @@ export default function PlannerClient({
         </button>
       </aside>
 
-      {/* ── Planner main ────────────────────────────────────────────── */}
       <div className="flex-1 min-w-0 p-6">
         <div className="flex items-center gap-3 mb-5 flex-wrap">
           <div>
@@ -575,7 +553,6 @@ export default function PlannerClient({
           </div>
         </div>
 
-        {/* Content */}
         {busy && <div className="text-[11px] font-mono text-slate-400 mb-3">Saving…</div>}
 
         {showBin ? (

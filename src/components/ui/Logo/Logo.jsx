@@ -1,8 +1,11 @@
+import styles from './Logo.module.css';
+
 export default function Logo({ size = 18, dark = false, withText = true }) {
+  const markSize = size * 1.45;
   return (
-    <span className="inline-flex items-center gap-2 font-semibold tracking-tight">
-      <span className="relative inline-flex items-center justify-center" style={{ width: size * 1.45, height: size * 1.45 }}>
-        <svg viewBox="0 0 32 32" width={size * 1.45} height={size * 1.45} className="waka">
+    <span className={styles.wrapper} style={{ fontSize: size }}>
+      <span className={styles.mark} style={{ width: markSize, height: markSize }}>
+        <svg viewBox="0 0 32 32" width={markSize} height={markSize} className={styles.waka}>
           <defs>
             <linearGradient id="wakaG" x1="0" x2="1" y1="0" y2="1">
               <stop offset="0" stopColor="#fb923c" />
@@ -14,8 +17,8 @@ export default function Logo({ size = 18, dark = false, withText = true }) {
         </svg>
       </span>
       {withText && (
-        <span className={dark ? 'text-white' : 'text-slate-900'}>
-          WhatThe<span className="text-orange-500">Txxk</span>
+        <span className={dark ? styles.textDark : styles.text}>
+          WhatThe<span className={styles.accent}>Txxk</span>
         </span>
       )}
     </span>

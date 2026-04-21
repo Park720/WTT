@@ -10,7 +10,6 @@ const HOURS      = HOUR_END - HOUR_START;
 const ROW_H      = 48;
 const VIEWS      = ['Day', 'Week', 'Month'];
 
-// ── Date helpers ─────────────────────────────────────────────────────────────
 
 function startOfWeek(offset = 0) {
   const d = new Date();
@@ -44,8 +43,6 @@ function formatWeekLabel(weekStart) {
   return `${sMon} ${weekStart.getDate()} – ${eMon} ${end.getDate()}, ${year}`;
 }
 
-// ── Task → event mapping ────────────────────────────────────────────────────
-
 function mapTaskToEvent(task, weekStart) {
   const due = new Date(task.dueDate);
   const dayIdx = Math.floor((new Date(due.getFullYear(), due.getMonth(), due.getDate()) - weekStart) / 86400000);
@@ -61,7 +58,6 @@ function mapTaskToEvent(task, weekStart) {
   return { task, day: dayIdx, start, len };
 }
 
-// Clamp event to visible range; returns null if entirely outside
 function clipEvent(ev) {
   const end = ev.start + ev.len;
   if (end <= HOUR_START || ev.start >= HOUR_END) return null;
@@ -69,8 +65,6 @@ function clipEvent(ev) {
   const e = Math.min(end, HOUR_END);
   return { ...ev, top: (s - HOUR_START) * ROW_H, height: Math.max(22, (e - s) * ROW_H - 4) };
 }
-
-// ── Event tile ──────────────────────────────────────────────────────────────
 
 function EventTile({ ev, onClick }) {
   const task = ev.task;
@@ -115,8 +109,6 @@ function EventTile({ ev, onClick }) {
   );
 }
 
-// ── Main ─────────────────────────────────────────────────────────────────────
-
 export default function CalendarClient({ project, tasks: initialTasks }) {
   const [weekOffset, setWeekOffset] = useState(0);
   const [view, setView] = useState('Week');
@@ -132,7 +124,6 @@ export default function CalendarClient({ project, tasks: initialTasks }) {
     }
   }
 
-  // Refresh the now-line every minute while mounted
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 60_000);
     return () => clearInterval(t);
@@ -172,7 +163,6 @@ export default function CalendarClient({ project, tasks: initialTasks }) {
     return counts;
   }, [events]);
 
-  // Now-line positioning
   const nowHour = now.getHours() + now.getMinutes() / 60;
   const todayDow = now.getDay();
   const todayIdx = todayDow === 0 ? 6 : todayDow - 1;
@@ -248,9 +238,7 @@ export default function CalendarClient({ project, tasks: initialTasks }) {
         ))}
       </div>
 
-      {/* Grid */}
       <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
-        {/* Day header row */}
         <div className="grid" style={{ gridTemplateColumns: '60px repeat(7, 1fr)' }}>
           <div className="border-b border-r border-slate-200" />
           {dayCells.map((d) => (
@@ -268,9 +256,7 @@ export default function CalendarClient({ project, tasks: initialTasks }) {
           ))}
         </div>
 
-        {/* Hour grid + events */}
         <div key={weekOffset} className="relative page-enter" style={{ height: HOURS * ROW_H }}>
-          {/* Hour rows */}
           <div className="absolute inset-0 grid" style={{ gridTemplateColumns: '60px repeat(7, 1fr)' }}>
             <div className="flex flex-col">
               {Array.from({ length: HOURS }, (_, i) => (
@@ -297,7 +283,6 @@ export default function CalendarClient({ project, tasks: initialTasks }) {
             ))}
           </div>
 
-          {/* Events */}
           {events.map((ev) => (
             <EventTile
               key={ev.task.id}
@@ -306,7 +291,6 @@ export default function CalendarClient({ project, tasks: initialTasks }) {
             />
           ))}
 
-          {/* Now-line */}
           {showNowLine && (
             <div
               className="absolute pointer-events-none z-10"
@@ -326,7 +310,6 @@ export default function CalendarClient({ project, tasks: initialTasks }) {
         </div>
       </div>
 
-      {/* Summary footer */}
       <div className="mt-4 grid sm:grid-cols-4 gap-3">
         {[
           { label: 'Scheduled',      value: events.length },

@@ -1,0 +1,17 @@
+.track {
+  height: 6px;
+  width: 100%;
+  border-radius: var(--radius-full);
+  background: var(--slate-100);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-normal);
+}
+
+.brand   { background: var(--brand-500); }
+.emerald { background: var(--color-success); }
+.slate   { background: var(--slate-400); }

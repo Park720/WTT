@@ -1,0 +1,112 @@
+:root {
+  /* ── Brand ────────────────────────────────────────────── */
+  --brand-50:  #fff7ed;
+  --brand-100: #ffedd5;
+  --brand-200: #fed7aa;
+  --brand-300: #fdba74;
+  --brand-400: #fb923c;
+  --brand-500: #f97316;
+  --brand-600: #ea580c;
+  --brand-700: #c2410c;
+
+  /* ── Neutrals (slate) ─────────────────────────────────── */
+  --slate-50:  #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+  --slate-950: #020617;
+
+  /* ── Semantic status palette ──────────────────────────── */
+  --status-todo:     #cbd5e1;
+  --status-progress: #f97316;
+  --status-review:   #f59e0b;
+  --status-done:     #10b981;
+  --status-blocked:  #64748b;
+
+  /* ── Priority palette ─────────────────────────────────── */
+  --priority-high:   #ef4444;
+  --priority-medium: #f59e0b;
+  --priority-low:    #3b82f6;
+
+  /* ── Accent tints (amber / emerald / sky / red / violet) ─ */
+  --amber-50:   #fffbeb;
+  --amber-100:  #fef3c7;
+  --amber-200:  #fde68a;
+  --amber-500:  #f59e0b;
+  --amber-600:  #d97706;
+  --amber-700:  #b45309;
+  --amber-900:  #78350f;
+
+  --emerald-50:  #ecfdf5;
+  --emerald-100: #d1fae5;
+  --emerald-200: #a7f3d0;
+  --emerald-500: #10b981;
+  --emerald-600: #059669;
+  --emerald-700: #047857;
+
+  --sky-50:  #f0f9ff;
+  --sky-500: #0ea5e9;
+  --sky-600: #0284c7;
+  --sky-700: #0369a1;
+
+  --red-50:  #fef2f2;
+  --red-100: #fee2e2;
+  --red-200: #fecaca;
+  --red-500: #ef4444;
+  --red-600: #dc2626;
+  --red-700: #b91c1c;
+
+  --violet-50:  #f5f3ff;
+  --violet-500: #8b5cf6;
+  --violet-600: #7c3aed;
+  --violet-700: #6d28d9;
+
+  /* ── Semantic aliases ─────────────────────────────────── */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger:  #ef4444;
+  --color-info:    #3b82f6;
+
+  /* ── Backgrounds ──────────────────────────────────────── */
+  --page-bg:     #fafaf7;
+  --card-bg:     #ffffff;
+  --sidebar-bg:  var(--slate-900);
+
+  /* ── Typography ───────────────────────────────────────── */
+  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'Consolas', monospace;
+
+  /* ── Radii ────────────────────────────────────────────── */
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-2xl:  1.5rem;
+  --radius-full: 9999px;
+
+  /* ── Shadows ──────────────────────────────────────────── */
+  --shadow-sm:       0 1px 2px rgba(15,23,42,.06);
+  --shadow-lift:     0 1px 2px rgba(15,23,42,.04), 0 8px 24px -12px rgba(15,23,42,.18);
+  --shadow-lift-lg:  0 2px 4px rgba(15,23,42,.04), 0 20px 40px -16px rgba(15,23,42,.22);
+
+  /* ── Spacing scale ────────────────────────────────────── */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* ── Motion ───────────────────────────────────────────── */
+  --transition-fast:   180ms cubic-bezier(0.2, 0.6, 0.2, 1);
+  --transition-normal: 280ms cubic-bezier(0.2, 0.6, 0.2, 1);
+}

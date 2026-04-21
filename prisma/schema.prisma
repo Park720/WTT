@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  MEMBER
+}
+
+enum Job {
+  UX_ART
+  PROGRAMMING
+  DESIGNER
+  PUBLISHER
+}
+
+enum Status {
+  TODO
+  IN_PROGRESS
+  PENDING_REVIEW
+  DONE
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum NotifType {
+  ASSIGNED
+  DEADLINE
+  STATUS_CHANGE
+  COMPLETION_REQUEST
+  DEPENDENCY_UNLOCKED
+}
+
+enum Delivery {
+  BADGE
+  TOAST
+  BOTH
+}
+
+enum ExportFormat {
+  PDF
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  memberships   ProjectMember[]
+  assignedTasks Task[]          @relation("assignee")
+  timerSessions TimerSession[]
+  notifications Notification[]
+  exports       ExportLog[]
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  color       String   @default("#3b82f6")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members ProjectMember[]
+  tasks   Task[]
+  exports ExportLog[]
+}
+
+model ProjectMember {
+  id        String   @id @default(cuid())
+  userId    String
+  projectId String
+  role      Role     @default(MEMBER)
+  job       Job?
+  joinedAt  DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+}
+
+model Task {
+  id               String    @id @default(cuid())
+  title            String
+  description      String?
+  status           Status    @default(TODO)
+  priority         Priority  @default(MEDIUM)
+  dueDate          DateTime?
+  projectId        String
+  assigneeId       String?
+  parentTaskId     String?
+  estimatedMinutes Int?
+  loggedMinutes    Int       @default(0)
+  isDeleted        Boolean   @default(false)
+  deletedAt        DateTime?
+  sortOrder        Int       @default(0)
+  isBlocked        Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+
+  project       Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignee      User?            @relation("assignee", fields: [assigneeId], references: [id])
+  parent        Task?            @relation("subtasks", fields: [parentTaskId], references: [id])
+  children      Task[]           @relation("subtasks")
+  sessions      TimerSession[]
+  notifications Notification[]
+  dependsOn     TaskDependency[] @relation("dependent")
+  blockedBy     TaskDependency[] @relation("blocker")
+}
+
+model TaskDependency {
+  id              String   @id @default(cuid())
+  dependentTaskId String
+  blockerTaskId   String
+  createdAt       DateTime @default(now())
+
+  dependent Task @relation("dependent", fields: [dependentTaskId], references: [id], onDelete: Cascade)
+  blocker   Task @relation("blocker", fields: [blockerTaskId], references: [id], onDelete: Cascade)
+
+  @@unique([dependentTaskId, blockerTaskId])
+}
+
+model TimerSession {
+  id        String    @id @default(cuid())
+  taskId    String
+  userId    String
+  duration  Int       @default(25)
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  type      NotifType
+  message   String
+  isRead    Boolean   @default(false)
+  delivery  Delivery  @default(BADGE)
+  taskId    String?
+  createdAt DateTime  @default(now())
+
+  user User  @relation(fields: [userId], references: [id])
+  task Task? @relation(fields: [taskId], references: [id])
+}
+
+model ExportLog {
+  id         String       @id @default(cuid())
+  projectId  String
+  exportedBy String
+  format     ExportFormat @default(PDF)
+  fileUrl    String
+  createdAt  DateTime     @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [exportedBy], references: [id])
+}

@@ -21,12 +21,60 @@ export async function PUT(req, { params }) {
   }
 
   const body = await req.json().catch(() => ({}));
+
+  if (body.heartbeat === true) {
+    const [updatedSession] = await prisma.$transaction([
+      prisma.timerSession.update({
+        where: { id: sessionId },
+        data: { lastHeartbeatAt: new Date() },
+      }),
+      prisma.task.update({
+        where: { id: session.taskId },
+        data: { loggedMinutes: { increment: 1 } },
+      }),
+    ]);
+    return NextResponse.json({
+      id: updatedSession.id,
+      taskId: updatedSession.taskId,
+      duration: updatedSession.duration,
+      startedAt: updatedSession.startedAt.toISOString(),
+      lastHeartbeatAt: updatedSession.lastHeartbeatAt?.toISOString() ?? null,
+    });
+  }
+
+  const hasDurationUpdate =
+    typeof body.duration === 'number' && Number.isFinite(body.duration);
+  const isDurationOnly =
+    hasDurationUpdate && !('markDone' in body) && !('completed' in body);
+
+  if (isDurationOnly) {
+    const minutes = Math.max(5, Math.min(120, Math.floor(body.duration)));
+    const updated = await prisma.timerSession.update({
+      where: { id: sessionId },
+      data: { duration: minutes },
+    });
+    return NextResponse.json({
+      id: updated.id,
+      taskId: updated.taskId,
+      duration: updated.duration,
+      startedAt: updated.startedAt.toISOString(),
+    });
+  }
+
   const markDone = !!body.markDone;
   const completed = !!body.completed;
 
-  const elapsedMin = Math.round((Date.now() - session.startedAt.getTime()) / 60000);
-  // If completed (ran to 0), credit the full duration. Otherwise credit actual elapsed, capped at duration.
-  const minutesToLog = Math.max(0, Math.min(session.duration, completed ? session.duration : elapsedMin));
+  // Heartbeats already credited 1 minute each; only log the uncredited residue
+  // so end-session doesn't double-count time.
+  const sessionStart = session.startedAt.getTime();
+  const heartbeatsCredited = session.lastHeartbeatAt
+    ? Math.max(0, Math.round((session.lastHeartbeatAt.getTime() - sessionStart) / 60000))
+    : 0;
+  const elapsedMin = Math.round((Date.now() - sessionStart) / 60000);
+  const totalBudget = completed
+    ? session.duration
+    : Math.max(0, Math.min(session.duration, elapsedMin));
+  const minutesToLog = Math.max(0, totalBudget - heartbeatsCredited);
 
   await prisma.timerSession.update({
     where: { id: sessionId },

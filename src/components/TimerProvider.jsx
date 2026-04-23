@@ -16,12 +16,17 @@ export function useTimer() {
   return ctx;
 }
 
+const MIN_TOTAL_SEC = 5 * 60;
+const MAX_TOTAL_SEC = 120 * 60;
+
 export default function TimerProvider({ children }) {
   const [mode, setMode]             = useState('focus');
   const [activeSession, setActive]  = useState(null); // { id, taskId, taskTitle, projectId, duration, startedAt }
+  const [totalSec, setTotalSec]     = useState(TIMER_MODES.focus.minutes * 60);
   const [remainingSec, setRem]      = useState(TIMER_MODES.focus.minutes * 60);
   const [running, setRunning]       = useState(false);
   const [completedSessions, setCompleted] = useState(0);
+  const [heartbeatTick, setHeartbeatTick] = useState(0);
   const hydratedRef = useRef(false);
 
   // ── Hydrate from server on mount ──────────────────────────────────────────
@@ -39,6 +44,7 @@ export default function TimerProvider({ children }) {
         const remaining = Math.max(0, total - elapsed);
         setActive(data);
         setMode('focus');
+        setTotalSec(total);
         setRem(remaining);
         setRunning(remaining > 0);
       } catch {
@@ -60,6 +66,23 @@ export default function TimerProvider({ children }) {
     return () => clearInterval(id);
   }, [running]);
 
+  // ── Heartbeat (every 60s while running with an active DB session) ────────
+  useEffect(() => {
+    if (!running || !activeSession) return;
+    const id = setInterval(() => {
+      fetch(`/api/timer/${activeSession.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ heartbeat: true }),
+      })
+        .then((res) => {
+          if (res.ok) setHeartbeatTick((n) => n + 1);
+        })
+        .catch(() => {});
+    }, 60000);
+    return () => clearInterval(id);
+  }, [running, activeSession]);
+
   // When countdown hits 0 naturally, auto-end the session and bump the counter.
   useEffect(() => {
     if (remainingSec !== 0 || !running) return;
@@ -79,7 +102,7 @@ export default function TimerProvider({ children }) {
   // ── Actions ───────────────────────────────────────────────────────────────
 
   const startFocus = useCallback(async ({ id, title, projectId, duration }) => {
-    const minutes = duration ?? TIMER_MODES.focus.minutes;
+    const minutes = duration ?? Math.floor(totalSec / 60);
     const res = await fetch(`/api/tasks/${id}/timer`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -92,17 +115,18 @@ export default function TimerProvider({ children }) {
     const data = await res.json();
     setActive({ ...data, taskTitle: data.taskTitle ?? title, projectId: data.projectId ?? projectId });
     setMode('focus');
+    setTotalSec(minutes * 60);
     setRem(minutes * 60);
     setRunning(true);
-  }, []);
+  }, [totalSec]);
 
   const pause  = useCallback(() => setRunning(false), []);
   const resume = useCallback(() => { if (remainingSec > 0) setRunning(true); }, [remainingSec]);
 
   const reset = useCallback(() => {
     setRunning(false);
-    setRem(TIMER_MODES[mode].minutes * 60);
-  }, [mode]);
+    setRem(totalSec);
+  }, [totalSec]);
 
   const skip = useCallback(async () => {
     if (activeSession) {
@@ -114,6 +138,7 @@ export default function TimerProvider({ children }) {
       setActive(null);
     }
     setRunning(false);
+    setTotalSec(TIMER_MODES[mode].minutes * 60);
     setRem(TIMER_MODES[mode].minutes * 60);
     setCompleted((n) => n + 1);
   }, [activeSession, mode]);
@@ -122,6 +147,7 @@ export default function TimerProvider({ children }) {
     if (!TIMER_MODES[nextMode]) return;
     setMode(nextMode);
     setRunning(false);
+    setTotalSec(TIMER_MODES[nextMode].minutes * 60);
     setRem(TIMER_MODES[nextMode].minutes * 60);
     // Switching away from focus ends the active DB session
     if (activeSession && nextMode !== 'focus') {
@@ -137,6 +163,7 @@ export default function TimerProvider({ children }) {
   const endSession = useCallback(async ({ markDone = false } = {}) => {
     if (!activeSession) {
       setRunning(false);
+      setTotalSec(TIMER_MODES[mode].minutes * 60);
       setRem(TIMER_MODES[mode].minutes * 60);
       return;
     }
@@ -147,13 +174,37 @@ export default function TimerProvider({ children }) {
     });
     setActive(null);
     setRunning(false);
+    setTotalSec(TIMER_MODES[mode].minutes * 60);
     setRem(TIMER_MODES[mode].minutes * 60);
   }, [activeSession, mode]);
 
+  const addMinutes = useCallback((delta) => {
+    const deltaSec = delta * 60;
+    setTotalSec((prevTotal) => {
+      const newTotal = Math.max(MIN_TOTAL_SEC, Math.min(MAX_TOTAL_SEC, prevTotal + deltaSec));
+      const actualDelta = newTotal - prevTotal;
+      if (actualDelta === 0) return prevTotal;
+      setRem((prevRem) => Math.max(0, Math.min(newTotal, prevRem + actualDelta)));
+      setActive((prev) => {
+        if (!prev) return prev;
+        const newMinutes = newTotal / 60;
+        fetch(`/api/timer/${prev.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ duration: newMinutes }),
+        }).catch(() => {});
+        return { ...prev, duration: newMinutes };
+      });
+      return newTotal;
+    });
+  }, []);
+
   const value = {
     mode, modes: TIMER_MODES,
-    activeSession, running, remainingSec, completedSessions,
-    startFocus, pause, resume, reset, skip, changeMode, endSession,
+    activeSession, running, totalSec, remainingSec, completedSessions,
+    heartbeatTick,
+    startFocus, pause, resume, reset, skip, changeMode, endSession, addMinutes,
+    MIN_TOTAL_SEC, MAX_TOTAL_SEC,
   };
 
   return <TimerContext.Provider value={value}>{children}</TimerContext.Provider>;

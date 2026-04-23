@@ -9,15 +9,11 @@ import {
 } from '@/components/ui';
 import NewTaskModal from '@/components/NewTaskModal';
 import useEscape from '@/hooks/useEscape';
+import { formatMinutes } from '@/lib/format';
 
 const PRIORITY_KEYS = Object.keys(PRIORITY);
 
 // ── helpers ──────────────────────────────────────────────────────────────────
-
-function hours(mins) {
-  if (!mins) return 0;
-  return Math.round(mins / 60);
-}
 
 function formatDate(iso) {
   if (!iso) return '—';
@@ -580,7 +576,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
                         <div>
                           <div className="text-slate-500 text-[10.5px] uppercase tracking-wider font-medium mb-0.5">Time</div>
                           <div className="font-mono text-slate-800">
-                            {hours(task.loggedMinutes)}h / {hours(task.estimatedMinutes)}h
+                            {formatMinutes(task.loggedMinutes)} / {formatMinutes(task.estimatedMinutes)}
                           </div>
                         </div>
                         {task.assignee && (

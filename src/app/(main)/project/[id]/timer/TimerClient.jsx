@@ -5,15 +5,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Icon } from '@/components/ui';
 import { useTimer } from '@/components/TimerProvider';
+import { formatMinutes } from '@/lib/format';
 
 const DIAL = 300;
 const STROKE = 10;
 const TOTAL_SESSIONS = 8;
-
-function hours(mins) {
-  if (!mins) return 0;
-  return Math.round((mins / 60) * 10) / 10;
-}
 
 function StatCard({ label, value, unit, tone = 'slate' }) {
   const tones = {
@@ -65,20 +61,38 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
   const router = useRouter();
   const {
     mode, modes,
-    activeSession, running, remainingSec, completedSessions,
-    startFocus, pause, resume, reset, skip, changeMode, endSession,
+    activeSession, running, totalSec, remainingSec, completedSessions,
+    heartbeatTick,
+    startFocus, pause, resume, reset, skip, changeMode, endSession, addMinutes,
+    MIN_TOTAL_SEC, MAX_TOTAL_SEC,
   } = useTimer();
 
   const [startError, setStartError] = useState('');
+  const [taskList, setTaskList] = useState(tasks);
   const preselectHandledRef = useRef(false);
+  const lastBumpedTickRef = useRef(0);
 
-  // If the URL has ?task=X, start a focus session on it (unless one is already active for that task).
+  useEffect(() => { setTaskList(tasks); }, [tasks]);
+
+  // Optimistic bump: each heartbeat adds 1 min to the active task's loggedMinutes,
+  // so Progress % and the Logged stat animate up live without re-fetching.
+  useEffect(() => {
+    if (heartbeatTick === 0 || heartbeatTick === lastBumpedTickRef.current) return;
+    lastBumpedTickRef.current = heartbeatTick;
+    const taskId = activeSession?.taskId;
+    if (!taskId) return;
+    setTaskList((prev) => prev.map((t) => (
+      t.id === taskId
+        ? { ...t, loggedMinutes: (t.loggedMinutes ?? 0) + 1 }
+        : t
+    )));
+  }, [heartbeatTick, activeSession]);
+
   useEffect(() => {
     if (preselectHandledRef.current) return;
     if (!preselectTaskId) { preselectHandledRef.current = true; return; }
     const task = tasks.find((t) => t.id === preselectTaskId);
     if (!task) { preselectHandledRef.current = true; return; }
-    // Already focused on this task — don't restart
     if (activeSession?.taskId === preselectTaskId) {
       preselectHandledRef.current = true;
       return;
@@ -91,31 +105,24 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
         setStartError(err.message || 'Could not start focus session');
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preselectTaskId]);
 
   const pinnedTask = useMemo(
-    () => (activeSession ? tasks.find((t) => t.id === activeSession.taskId) ?? null : null),
-    [activeSession, tasks],
+    () => (activeSession ? taskList.find((t) => t.id === activeSession.taskId) ?? null : null),
+    [activeSession, taskList],
   );
 
-  // Derived stats
   const stats = useMemo(() => {
-    const openTasks = tasks.filter((t) => !t.isDeleted);
+    const openTasks = taskList.filter((t) => !t.isDeleted);
     const missions = openTasks.filter((t) => t.status !== 'DONE').length;
     const estMin = openTasks.reduce((n, t) => n + (t.estimatedMinutes ?? 0), 0);
     const logMin = openTasks.reduce((n, t) => n + (t.loggedMinutes ?? 0), 0);
     const progressPct = estMin > 0 ? Math.round((logMin / estMin) * 100) : 0;
-    return {
-      missions,
-      progressPct,
-      estHours: hours(estMin),
-      logHours: hours(logMin),
-    };
-  }, [tasks]);
+    return { missions, progressPct, estMin, logMin };
+  }, [taskList]);
 
   const upNext = useMemo(() => {
-    return tasks
+    return taskList
       .filter((t) =>
         !t.isDeleted
         && !t.isBlocked
@@ -124,14 +131,25 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
         && (t.assigneeId === currentUserId || !t.assigneeId),
       )
       .slice(0, 4);
-  }, [tasks, activeSession, currentUserId]);
+  }, [taskList, activeSession, currentUserId]);
 
-  // Dial maths
-  const totalSec = modes[mode].minutes * 60;
   const pct = totalSec > 0 ? 100 * (1 - remainingSec / totalSec) : 0;
   const r = (DIAL - STROKE * 2) / 2;
   const circ = 2 * Math.PI * r;
   const dashOffset = circ - (Math.min(100, Math.max(0, pct)) / 100) * circ;
+
+  // Active sessions in context are owned by the current user by construction
+  // (see /api/timer/active), so only clamp on duration bounds.
+  const minusDisabled = totalSec <= MIN_TOTAL_SEC;
+  const plusDisabled  = totalSec >= MAX_TOTAL_SEC;
+  const adjustBtn =
+    'w-9 h-9 rounded-full border border-slate-200 bg-transparent text-slate-500 ' +
+    'text-[20px] leading-none flex items-center justify-center select-none ' +
+    'transition-all duration-150 ' +
+    'hover:bg-slate-100 hover:border-slate-300 active:scale-[0.96] ' +
+    'disabled:opacity-30 disabled:cursor-not-allowed ' +
+    'disabled:hover:bg-transparent disabled:hover:border-slate-200 ' +
+    'disabled:active:scale-100';
 
   const mm = String(Math.floor(remainingSec / 60)).padStart(2, '0');
   const ss = String(remainingSec % 60).padStart(2, '0');
@@ -185,7 +203,6 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
       )}
 
       <div className="grid lg:grid-cols-[auto_1fr] gap-8">
-        {/* ── Dial card ──────────────────────────────────────────────── */}
         <div className="rounded-3xl border bg-white border-slate-200 p-10 flex items-center justify-center relative overflow-hidden">
           <div className="absolute inset-0 grain opacity-30 pointer-events-none" />
           <div className="relative flex flex-col items-center">
@@ -215,8 +232,28 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
                 <div className="text-[11px] uppercase tracking-[0.16em] font-medium text-slate-500">
                   {modes[mode].label}
                 </div>
-                <div className="font-mono text-[72px] font-semibold leading-none mt-2 tabular-nums text-slate-900">
-                  {mm}:{ss}
+                <div className="mt-2 flex items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={() => addMinutes(-5)}
+                    disabled={minusDisabled}
+                    aria-label="Subtract 5 minutes"
+                    className={adjustBtn}
+                  >
+                    {'−'}
+                  </button>
+                  <div className="font-mono text-[72px] font-semibold leading-none tabular-nums text-slate-900">
+                    {mm}:{ss}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => addMinutes(5)}
+                    disabled={plusDisabled}
+                    aria-label="Add 5 minutes"
+                    className={adjustBtn}
+                  >
+                    +
+                  </button>
                 </div>
                 <div className="mt-3 inline-flex items-center gap-1.5 text-[11.5px] font-mono text-slate-500">
                   {running ? (
@@ -232,7 +269,6 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
               </div>
             </div>
 
-            {/* Controls */}
             <div className="mt-8 flex items-center gap-3">
               <button
                 type="button"
@@ -260,7 +296,6 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
               </button>
             </div>
 
-            {/* Session dots */}
             <div className="mt-6 flex items-center gap-1.5">
               {Array.from({ length: TOTAL_SESSIONS }, (_, i) => (
                 <span
@@ -275,7 +310,6 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
               </span>
             </div>
 
-            {/* End session button (only when a DB session exists) */}
             {activeSession && (
               <div className="mt-5 flex items-center gap-2">
                 <button
@@ -297,7 +331,6 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
           </div>
         </div>
 
-        {/* ── Stats panel ────────────────────────────────────────────── */}
         <div className="space-y-4">
           <div className="rounded-2xl border bg-white border-slate-200 p-5">
             <div className="flex items-center gap-3">
@@ -318,10 +351,10 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <StatCard label="Missions remaining" value={stats.missions}    unit="tasks" tone="amber" />
-            <StatCard label="Progress"           value={stats.progressPct} unit="%"     tone="brand" />
-            <StatCard label="Estimated"          value={stats.estHours}    unit="h"     tone="slate" />
-            <StatCard label="Logged"             value={stats.logHours}    unit="h"     tone="emerald" />
+            <StatCard label="Missions remaining" value={stats.missions}               unit="tasks" tone="amber" />
+            <StatCard label="Progress"           value={stats.progressPct}            unit="%"     tone="brand" />
+            <StatCard label="Estimated"          value={formatMinutes(stats.estMin)}               tone="slate" />
+            <StatCard label="Logged"             value={formatMinutes(stats.logMin)}               tone="emerald" />
           </div>
 
           <div className="rounded-2xl border bg-white border-slate-200 p-5">
@@ -339,7 +372,7 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
                       <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
                       <span className="text-[13px] text-slate-800 truncate">{t.title}</span>
                       <span className="ml-auto font-mono text-[11px] text-slate-400">
-                        {t.estimatedMinutes ? `${hours(t.estimatedMinutes)}h` : '—'}
+                        {t.estimatedMinutes ? formatMinutes(t.estimatedMinutes) : '—'}
                       </span>
                     </Link>
                   </li>

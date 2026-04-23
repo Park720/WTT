@@ -10,14 +10,10 @@ import {
 import MembersModal from '@/components/MembersModal';
 import NewTaskModal from '@/components/NewTaskModal';
 import TaskDetailModal from '@/components/TaskDetailModal';
+import { formatMinutes } from '@/lib/format';
 
 const TIME_FILTERS = ['Today', 'Week', 'Month'];
 const JOB_KEYS = Object.keys(JOB_LABELS);
-
-function hours(mins) {
-  if (!mins) return 0;
-  return Math.round(mins / 60);
-}
 
 function formatDue(iso) {
   if (!iso) return null;
@@ -168,7 +164,7 @@ function ManagerCard({ t, onApprove, onReject, onBin, onAddSubtask, onOpenTask, 
                   )}
                   {!isBlocked && (
                     <span className="ml-auto font-mono text-[10px] text-slate-500">
-                      {hours(s.estimatedMinutes)}h est
+                      {formatMinutes(s.estimatedMinutes)} est
                     </span>
                   )}
                 </button>
@@ -183,7 +179,7 @@ function ManagerCard({ t, onApprove, onReject, onBin, onAddSubtask, onOpenTask, 
 
       <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-3">
         {assignees.length > 0 && <AvatarStack users={assignees} size={20} />}
-        <span className="font-mono text-[11px] text-slate-500">{hours(logMin)}h / {hours(estMin)}h</span>
+        <span className="font-mono text-[11px] text-slate-500">{formatMinutes(logMin)} / {formatMinutes(estMin)}</span>
         {isOwner && (
           <button
             type="button"
@@ -269,7 +265,7 @@ function MemberChecklistCard({ t, currentUser, isOwner, onRequestReview, onAppro
               <span className="ml-auto flex items-center gap-2">
                 <StatusPill status={s.status} size="sm" />
                 <span className="font-mono text-[11px] text-slate-400">
-                  {hours(s.loggedMinutes)}/{hours(s.estimatedMinutes)}h
+                  {formatMinutes(s.loggedMinutes)} / {formatMinutes(s.estimatedMinutes)}
                 </span>
                 {canRequest && (
                   <button

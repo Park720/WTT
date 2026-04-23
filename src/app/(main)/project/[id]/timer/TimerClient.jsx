@@ -29,30 +29,38 @@ function StatCard({ label, value, unit, tone = 'slate' }) {
   );
 }
 
-// SVG tick marks — 60 ticks, longer every 5
+// Precompute tick geometry once and round to 3 decimals so Node and browser
+// implementations of Math.sin/cos can't desync in the 12th+ decimal and
+// trigger a hydration mismatch on these SVG attributes.
+const TICK_RADIUS = (DIAL - STROKE * 2) / 2 - 2;
+const TICK_CX = DIAL / 2;
+const TICK_CY = DIAL / 2;
+const round3 = (n) => Math.round(n * 1000) / 1000;
+const DIAL_TICKS = Array.from({ length: 60 }, (_, i) => {
+  const ang = (i / 60) * 2 * Math.PI - Math.PI / 2;
+  const long = i % 5 === 0;
+  const outer = TICK_RADIUS + (long ? 6 : 4);
+  const inner = TICK_RADIUS + (long ? 12 : 10);
+  return {
+    x1: round3(TICK_CX + Math.cos(ang) * inner),
+    y1: round3(TICK_CY + Math.sin(ang) * inner),
+    x2: round3(TICK_CX + Math.cos(ang) * outer),
+    y2: round3(TICK_CY + Math.sin(ang) * outer),
+    long,
+  };
+});
+
 function DialTicks() {
-  const r = (DIAL - STROKE * 2) / 2 - 2;
-  const cx = DIAL / 2;
-  const cy = DIAL / 2;
   return (
     <g>
-      {Array.from({ length: 60 }, (_, i) => {
-        const ang = (i / 60) * 2 * Math.PI - Math.PI / 2;
-        const long = i % 5 === 0;
-        const outer = r + (long ? 6 : 4);
-        const inner = r + (long ? 12 : 10);
-        const x1 = cx + Math.cos(ang) * inner;
-        const y1 = cy + Math.sin(ang) * inner;
-        const x2 = cx + Math.cos(ang) * outer;
-        const y2 = cy + Math.sin(ang) * outer;
-        return (
-          <line
-            key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-            stroke="#cbd5e1"
-            strokeWidth={long ? 1.5 : 0.8}
-          />
-        );
-      })}
+      {DIAL_TICKS.map((t, i) => (
+        <line
+          key={i}
+          x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2}
+          stroke="#cbd5e1"
+          strokeWidth={t.long ? 1.5 : 0.8}
+        />
+      ))}
     </g>
   );
 }
@@ -112,14 +120,29 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
     [activeSession, taskList],
   );
 
+  // Scope stats to the pinned task (with its subtasks) when one is focused,
+  // otherwise sum the whole project. Always derived fresh — no stale carry-over.
   const stats = useMemo(() => {
+    const sumEst = (rows) => rows.reduce((n, t) => n + (t.estimatedMinutes ?? 0), 0);
+    const sumLog = (rows) => rows.reduce((n, t) => n + (t.loggedMinutes ?? 0), 0);
+
+    if (pinnedTask) {
+      const subs = taskList.filter((t) => !t.isDeleted && t.parentTaskId === pinnedTask.id);
+      const scoped = subs.length > 0 ? subs : [pinnedTask];
+      const missions = scoped.filter((t) => t.status !== 'DONE').length;
+      const estMin = sumEst(scoped);
+      const logMin = sumLog(scoped);
+      const progressPct = estMin > 0 ? Math.round((logMin / estMin) * 100) : 0;
+      return { scope: 'task', missions, progressPct, estMin, logMin };
+    }
+
     const openTasks = taskList.filter((t) => !t.isDeleted);
     const missions = openTasks.filter((t) => t.status !== 'DONE').length;
-    const estMin = openTasks.reduce((n, t) => n + (t.estimatedMinutes ?? 0), 0);
-    const logMin = openTasks.reduce((n, t) => n + (t.loggedMinutes ?? 0), 0);
+    const estMin = sumEst(openTasks);
+    const logMin = sumLog(openTasks);
     const progressPct = estMin > 0 ? Math.round((logMin / estMin) * 100) : 0;
-    return { missions, progressPct, estMin, logMin };
-  }, [taskList]);
+    return { scope: 'project', missions, progressPct, estMin, logMin };
+  }, [taskList, pinnedTask]);
 
   const upNext = useMemo(() => {
     return taskList
@@ -133,10 +156,13 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
       .slice(0, 4);
   }, [taskList, activeSession, currentUserId]);
 
-  const pct = totalSec > 0 ? 100 * (1 - remainingSec / totalSec) : 0;
+  // Ring represents remaining time: full at start, empty at 0.
+  const remainingFrac = totalSec > 0
+    ? Math.max(0, Math.min(1, remainingSec / totalSec))
+    : 0;
   const r = (DIAL - STROKE * 2) / 2;
   const circ = 2 * Math.PI * r;
-  const dashOffset = circ - (Math.min(100, Math.max(0, pct)) / 100) * circ;
+  const dashOffset = circ * (1 - remainingFrac);
 
   // Active sessions in context are owned by the current user by construction
   // (see /api/timer/active), so only clamp on duration bounds.
@@ -350,11 +376,16 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <StatCard label="Missions remaining" value={stats.missions}               unit="tasks" tone="amber" />
-            <StatCard label="Progress"           value={stats.progressPct}            unit="%"     tone="brand" />
-            <StatCard label="Estimated"          value={formatMinutes(stats.estMin)}               tone="slate" />
-            <StatCard label="Logged"             value={formatMinutes(stats.logMin)}               tone="emerald" />
+          <div>
+            <div className="mb-2 px-1 text-[10.5px] uppercase tracking-wider font-medium text-slate-400">
+              {stats.scope === 'task' ? 'This task' : 'Project totals'}
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <StatCard label="Missions remaining" value={stats.missions}               unit="tasks" tone="amber" />
+              <StatCard label="Progress"           value={stats.progressPct}            unit="%"     tone="brand" />
+              <StatCard label="Estimated"          value={formatMinutes(stats.estMin)}               tone="slate" />
+              <StatCard label="Logged"             value={formatMinutes(stats.logMin)}               tone="emerald" />
+            </div>
           </div>
 
           <div className="rounded-2xl border bg-white border-slate-200 p-5">

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Icon, PRIORITY } from '@/components/ui';
 import useEscape from '@/hooks/useEscape';
+import { combineDueDateInputs } from '@/lib/format';
 
 const PRIORITY_KEYS = Object.keys(PRIORITY);
 
@@ -13,6 +14,7 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('MEDIUM');
   const [dueDate, setDueDate] = useState('');
+  const [dueTime, setDueTime] = useState('');
   const [assigneeId, setAssigneeId] = useState('');
   const [estimatedHours, setEstimatedHours] = useState('');
   const [error, setError] = useState('');
@@ -29,7 +31,7 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
         title,
         description: description || undefined,
         priority,
-        dueDate: dueDate || undefined,
+        dueDate: combineDueDateInputs(dueDate, dueTime) ?? undefined,
         assigneeId: assigneeId || undefined,
         parentTaskId: parent?.id,
         estimatedMinutes: estimatedHours ? Number(estimatedHours) * 60 : undefined,
@@ -91,26 +93,6 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
               </select>
             </div>
             <div>
-              <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Due date</label>
-              <input
-                type="date"
-                value={dueDate} onChange={(e) => setDueDate(e.target.value)}
-                className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Assignee</label>
-              <select
-                value={assigneeId} onChange={(e) => setAssigneeId(e.target.value)}
-                className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
-              >
-                <option value="">Unassigned</option>
-                {members.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
-              </select>
-            </div>
-            <div>
               <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Estimated hours</label>
               <input
                 type="number" min="0" step="0.5"
@@ -118,6 +100,42 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
                 placeholder="0" className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
               />
             </div>
+          </div>
+          <div>
+            <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Due date</label>
+            <div className="flex items-start gap-2">
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => {
+                  setDueDate(e.target.value);
+                  if (!e.target.value) setDueTime('');
+                }}
+                className="flex-1 min-w-0 h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
+              />
+              <div className="shrink-0">
+                <input
+                  type="time"
+                  step={900}
+                  value={dueTime}
+                  onChange={(e) => setDueTime(e.target.value)}
+                  disabled={!dueDate}
+                  aria-label="Due time (optional)"
+                  className="w-[112px] h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400 disabled:bg-slate-50 disabled:text-slate-400"
+                />
+                <div className="text-[10.5px] text-slate-400 mt-1 text-center">Time (optional)</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Assignee</label>
+            <select
+              value={assigneeId} onChange={(e) => setAssigneeId(e.target.value)}
+              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
+            >
+              <option value="">Unassigned</option>
+              {members.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+            </select>
           </div>
 
           {error && (

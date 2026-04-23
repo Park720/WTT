@@ -9,31 +9,20 @@ import {
 } from '@/components/ui';
 import NewTaskModal from '@/components/NewTaskModal';
 import useEscape from '@/hooks/useEscape';
-import { formatMinutes } from '@/lib/format';
+import {
+  formatMinutes,
+  formatDueDate,
+  splitDueDateForInputs,
+  combineDueDateInputs,
+} from '@/lib/format';
 
 const PRIORITY_KEYS = Object.keys(PRIORITY);
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
-function formatDate(iso) {
+function formatCreatedAt(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-}
-
-function formatTime(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  if (d.getHours() === 0 && d.getMinutes() === 0) return '';
-  return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-}
-
-function toDateInput(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
 }
 
 // ── sub-components ───────────────────────────────────────────────────────────
@@ -152,7 +141,8 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
 
   const [editMode, setEditMode] = useState(false);
   const [edit, setEdit] = useState({
-    title: '', description: '', priority: 'MEDIUM', dueDate: '',
+    title: '', description: '', priority: 'MEDIUM',
+    dueDate: '', dueTime: '',
     assigneeId: '', estimatedHours: '',
   });
 
@@ -247,11 +237,13 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
   }
 
   function startEdit() {
+    const { date, time } = splitDueDateForInputs(task.dueDate);
     setEdit({
       title: task.title,
       description: task.description ?? '',
       priority: task.priority,
-      dueDate: toDateInput(task.dueDate),
+      dueDate: date,
+      dueTime: time,
       assigneeId: task.assigneeId ?? '',
       estimatedHours: task.estimatedMinutes ? task.estimatedMinutes / 60 : '',
     });
@@ -268,7 +260,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
           title: edit.title,
           description: edit.description || null,
           priority: edit.priority,
-          dueDate: edit.dueDate || null,
+          dueDate: combineDueDateInputs(edit.dueDate, edit.dueTime),
           assigneeId: edit.assigneeId || null,
           estimatedMinutes: edit.estimatedHours ? Number(edit.estimatedHours) * 60 : null,
         }),
@@ -477,8 +469,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
                 <PriorityDot priority={task.priority} withLabel />
                 {task.dueDate && (
                   <span className="font-mono text-[12px] text-slate-500">
-                    Due {formatDate(task.dueDate)}
-                    {formatTime(task.dueDate) && `, ${formatTime(task.dueDate)}`}
+                    Due {formatDueDate(task.dueDate)}
                   </span>
                 )}
                 {task.assignee && (
@@ -533,15 +524,6 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
                           </select>
                         </div>
                         <div>
-                          <label className="text-[11.5px] font-medium text-slate-700 mb-1.5 block">Due date</label>
-                          <input
-                            type="date"
-                            value={edit.dueDate}
-                            onChange={(e) => setEdit((s) => ({ ...s, dueDate: e.target.value }))}
-                            className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13px] focus:outline-none focus:border-orange-400"
-                          />
-                        </div>
-                        <div>
                           <label className="text-[11.5px] font-medium text-slate-700 mb-1.5 block">Assignee</label>
                           <select
                             value={edit.assigneeId}
@@ -551,6 +533,32 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
                             <option value="">Unassigned</option>
                             {members.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
                           </select>
+                        </div>
+                        <div className="col-span-2">
+                          <label className="text-[11.5px] font-medium text-slate-700 mb-1.5 block">Due date</label>
+                          <div className="flex items-start gap-2">
+                            <input
+                              type="date"
+                              value={edit.dueDate}
+                              onChange={(e) => {
+                                const v = e.target.value;
+                                setEdit((s) => ({ ...s, dueDate: v, dueTime: v ? s.dueTime : '' }));
+                              }}
+                              className="flex-1 min-w-0 h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13px] focus:outline-none focus:border-orange-400"
+                            />
+                            <div className="shrink-0">
+                              <input
+                                type="time"
+                                step={900}
+                                value={edit.dueTime}
+                                onChange={(e) => setEdit((s) => ({ ...s, dueTime: e.target.value }))}
+                                disabled={!edit.dueDate}
+                                aria-label="Due time (optional)"
+                                className="w-[112px] h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13px] focus:outline-none focus:border-orange-400 disabled:bg-slate-50 disabled:text-slate-400"
+                              />
+                              <div className="text-[10.5px] text-slate-400 mt-1 text-center">Time (optional)</div>
+                            </div>
+                          </div>
                         </div>
                         <div>
                           <label className="text-[11.5px] font-medium text-slate-700 mb-1.5 block">Estimated hours</label>
@@ -664,7 +672,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
                 {/* Activity */}
                 <Section title="Activity">
                   <div className="text-[12.5px] text-slate-600 space-y-1 font-mono">
-                    <div>Created {formatDate(task.createdAt)}</div>
+                    <div>Created {formatCreatedAt(task.createdAt)}</div>
                     {task.assignee && <div>Assigned to {task.assignee.name}</div>}
                     {task.status === 'DONE' && <div className="text-emerald-600">Marked done</div>}
                     {task.status === 'PENDING_REVIEW' && <div className="text-amber-600">Awaiting review</div>}

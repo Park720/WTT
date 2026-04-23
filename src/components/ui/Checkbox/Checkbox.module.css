@@ -29,6 +29,11 @@
   cursor: not-allowed;
 }
 
+@keyframes drawCheck {
+  from { stroke-dashoffset: 20; }
+  to   { stroke-dashoffset: 0; }
+}
+
 .check path {
   stroke-dasharray: 20;
   animation: drawCheck 0.25s ease forwards;

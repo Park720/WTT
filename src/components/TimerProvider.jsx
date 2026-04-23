@@ -178,26 +178,29 @@ export default function TimerProvider({ children }) {
     setRem(TIMER_MODES[mode].minutes * 60);
   }, [activeSession, mode]);
 
+  // Flat implementation (no nested setState updaters). React StrictMode
+  // double-invokes state updater functions, so nesting a `setRem` call
+  // inside a `setTotalSec` updater caused the delta to apply twice.
   const addMinutes = useCallback((delta) => {
     const deltaSec = delta * 60;
-    setTotalSec((prevTotal) => {
-      const newTotal = Math.max(MIN_TOTAL_SEC, Math.min(MAX_TOTAL_SEC, prevTotal + deltaSec));
-      const actualDelta = newTotal - prevTotal;
-      if (actualDelta === 0) return prevTotal;
-      setRem((prevRem) => Math.max(0, Math.min(newTotal, prevRem + actualDelta)));
-      setActive((prev) => {
-        if (!prev) return prev;
-        const newMinutes = newTotal / 60;
-        fetch(`/api/timer/${prev.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ duration: newMinutes }),
-        }).catch(() => {});
-        return { ...prev, duration: newMinutes };
-      });
-      return newTotal;
-    });
-  }, []);
+    const newTotal = Math.max(MIN_TOTAL_SEC, Math.min(MAX_TOTAL_SEC, totalSec + deltaSec));
+    const actualDelta = newTotal - totalSec;
+    if (actualDelta === 0) return;
+
+    setTotalSec(newTotal);
+    // Shift remaining by the same delta so elapsed time stays constant.
+    setRem((prevRem) => Math.max(0, Math.min(newTotal, prevRem + actualDelta)));
+
+    if (activeSession) {
+      const newMinutes = newTotal / 60;
+      fetch(`/api/timer/${activeSession.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ duration: newMinutes }),
+      }).catch(() => {});
+      setActive({ ...activeSession, duration: newMinutes });
+    }
+  }, [totalSec, activeSession]);
 
   const value = {
     mode, modes: TIMER_MODES,

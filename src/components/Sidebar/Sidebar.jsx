@@ -10,9 +10,9 @@ import styles from './Sidebar.module.css';
 
 const APP_NAV = [
   { key: 'dashboard', label: 'Dashboard', icon: 'Home',     href: '/dashboard' },
+  { key: 'calendar',  label: 'Calendar',  icon: 'Calendar', href: '/calendar'  },
   { key: 'planner',   label: 'Planner',   icon: 'List',     project: 'planner' },
-  { key: 'calendar',  label: 'Calendar',  icon: 'Calendar', project: 'calendar' },
-  { key: 'pomodoro',  label: 'Pomodoro',  icon: 'Timer',    project: 'timer' },
+  { key: 'pomodoro',  label: 'Pomodoro',  icon: 'Timer',    project: 'timer'   },
 ];
 
 function NavItem({ icon, label, href, active, disabled, onClick }) {

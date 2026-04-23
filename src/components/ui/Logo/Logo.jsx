@@ -12,7 +12,7 @@ export default function Logo({ size = 18, dark = false, withText = true }) {
               <stop offset="1" stopColor="#f97316" />
             </linearGradient>
           </defs>
-          <path d="M16 2 A14 14 0 1 1 4.8 23.2 L16 16 Z" fill="url(#wakaG)" />
+          <path className={styles.mouth} d="M16 2 A14 14 0 1 1 4.8 23.2 L16 16 Z" fill="url(#wakaG)" />
           <circle cx="19" cy="10" r="1.6" fill="#fff" />
         </svg>
       </span>

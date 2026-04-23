@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AvatarStack, ProgressBar, Icon } from '@/components/ui';
 import { useToast } from '@/components/Toaster';
 import useEscape from '@/hooks/useEscape';
+import EditProjectModal from '@/components/EditProjectModal/EditProjectModal';
+import DeleteProjectDialog from '@/components/DeleteProjectDialog/DeleteProjectDialog';
 
 const FILTERS = ['All', 'Mine', 'Active', 'Launching', 'Archived'];
 
@@ -60,10 +62,35 @@ function DueTag({ iso }) {
   );
 }
 
-function ProjectCard({ p, onShowExports }) {
+function ProjectCard({ p, isOwner, onEdit, onShowExports, onDelete }) {
   const toast = useToast();
   const [exporting, setExporting] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuWrapRef = useRef(null);
   const tag = p.description?.slice(0, 24) || 'Project';
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onDown = (e) => {
+      if (menuWrapRef.current && !menuWrapRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    const onKey = (e) => { if (e.key === 'Escape') setMenuOpen(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
+
+  const pickFromMenu = (e, action) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMenuOpen(false);
+    action(p);
+  };
 
   async function handleExport(e) {
     e.preventDefault();
@@ -106,14 +133,59 @@ function ProjectCard({ p, onShowExports }) {
             </div>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onShowExports(p); }}
-          className="p-1 rounded hover:bg-black/5 text-slate-400 shrink-0"
-          title="Export history"
-        >
-          <Icon.Dots className="w-4 h-4" />
-        </button>
+        <div ref={menuWrapRef} className="relative shrink-0">
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setMenuOpen((o) => !o); }}
+            className="p-1 rounded hover:bg-black/5 text-slate-400"
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+            title="Menu"
+          >
+            <Icon.Dots className="w-4 h-4" />
+          </button>
+          {menuOpen && (
+            <div
+              role="menu"
+              className="absolute right-0 top-8 w-[200px] rounded-xl bg-white border border-slate-200 shadow-lift-lg py-1 z-20"
+            >
+              {isOwner && (
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={(e) => pickFromMenu(e, onEdit)}
+                  className="w-full h-10 px-3 flex items-center gap-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50"
+                >
+                  <Icon.Settings className="w-4 h-4 text-slate-500" />
+                  Edit project
+                </button>
+              )}
+              <button
+                type="button"
+                role="menuitem"
+                onClick={(e) => pickFromMenu(e, onShowExports)}
+                className="w-full h-10 px-3 flex items-center gap-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50"
+              >
+                <Icon.Download className="w-4 h-4 text-slate-500" />
+                Recent exports
+              </button>
+              {isOwner && (
+                <>
+                  <div className="my-1 h-px bg-slate-200" />
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={(e) => pickFromMenu(e, onDelete)}
+                    className="w-full h-10 px-3 flex items-center gap-2 text-[13px] font-medium text-red-600 hover:bg-red-50"
+                  >
+                    <Icon.Bin className="w-4 h-4" />
+                    Delete project
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="mt-5">
@@ -348,6 +420,10 @@ export default function DashboardClient({ user, projects }) {
   const [showNew, setShowNew] = useState(false);
 
   const [exportsFor, setExportsFor] = useState(null);
+  const [editFor, setEditFor]       = useState(null);
+  const [deleteFor, setDeleteFor]   = useState(null);
+
+  const isOwnerOf = (p) => p.members.some((m) => m.id === user.id && m.role === 'OWNER');
 
   const filtered = useMemo(() => {
     switch (filter) {
@@ -463,7 +539,16 @@ export default function DashboardClient({ user, projects }) {
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((p) => <ProjectCard key={p.id} p={p} onShowExports={setExportsFor} />)}
+            {filtered.map((p) => (
+              <ProjectCard
+                key={p.id}
+                p={p}
+                isOwner={isOwnerOf(p)}
+                onEdit={setEditFor}
+                onShowExports={setExportsFor}
+                onDelete={setDeleteFor}
+              />
+            ))}
           </div>
         )}
       </div>
@@ -479,6 +564,22 @@ export default function DashboardClient({ user, projects }) {
         <ExportsHistoryModal
           project={exportsFor}
           onClose={() => setExportsFor(null)}
+        />
+      )}
+
+      {editFor && (
+        <EditProjectModal
+          project={editFor}
+          onClose={() => setEditFor(null)}
+          onSaved={() => { setEditFor(null); router.refresh(); }}
+        />
+      )}
+
+      {deleteFor && (
+        <DeleteProjectDialog
+          project={deleteFor}
+          onClose={() => setDeleteFor(null)}
+          onDeleted={() => { setDeleteFor(null); router.refresh(); }}
         />
       )}
     </div>

@@ -1,0 +1,662 @@
+.page {
+  padding: 1.25rem 1.5rem;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--slate-900);
+}
+
+.subtitle {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  margin-top: 0.125rem;
+  color: var(--slate-500);
+}
+
+.nav {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ── View-mode pill ─────────────────────────────────── */
+
+.viewPill {
+  display: flex;
+  align-items: center;
+  background: var(--slate-100);
+  border-radius: var(--radius-lg);
+  padding: 3px;
+  gap: 2px;
+}
+
+.viewBtn {
+  padding: 0.25rem 0.75rem;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--slate-500);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.viewBtn:hover:not(:disabled) {
+  color: var(--slate-800);
+}
+
+.viewBtnActive {
+  background: #fff;
+  color: var(--slate-900) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+.viewBtnDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.navPill {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.navBtn {
+  padding: 0.375rem 0.625rem;
+  color: var(--slate-600);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: background var(--transition-fast);
+}
+
+.navBtn:hover {
+  background: var(--slate-50);
+}
+
+.navChev {
+  width: 14px;
+  height: 14px;
+}
+
+.monthLabel {
+  padding: 0.375rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  border-left: 1px solid var(--slate-200);
+  border-right: 1px solid var(--slate-200);
+  color: var(--slate-700);
+  min-width: 140px;
+  text-align: center;
+}
+
+.todayBtn {
+  padding: 0.375rem 0.75rem;
+  font-size: 12.5px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  color: var(--slate-700);
+  background: #fff;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.todayBtn:hover:not(:disabled) {
+  background: var(--slate-50);
+}
+
+.todayBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Legend ─────────────────────────────────────────── */
+
+.legend {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.875rem;
+}
+
+.legendChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 11.5px;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--slate-200);
+  background: #fff;
+  cursor: pointer;
+  transition: opacity var(--transition-fast), background var(--transition-fast);
+}
+
+.legendChipMuted {
+  opacity: 0.55;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+}
+
+/* ── Month box ──────────────────────────────────────── */
+
+.monthBox {
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: #fff;
+}
+
+.dow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: var(--slate-50);
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.dowCell {
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--slate-500);
+  border-right: 1px solid var(--slate-200);
+}
+
+.dowCell:last-child {
+  border-right: 0;
+}
+
+/* ── Week rows ──────────────────────────────────────── */
+
+.weekRow {
+  position: relative;
+  min-height: 130px;
+  border-bottom: 1px solid var(--slate-200);
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.weekRow:last-child {
+  border-bottom: 0;
+}
+
+.cells {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.cell {
+  position: relative;
+  min-height: 130px;
+  padding: 0.375rem 0.5rem 0.25rem;
+  border-right: 1px solid var(--slate-200);
+}
+
+.cell:last-child {
+  border-right: 0;
+}
+
+.cellOut {
+  opacity: 0.35;
+}
+
+.cellWeekend {
+  background: rgba(241, 245, 249, 0.35);
+}
+
+.cellToday {
+  background: rgba(249, 115, 22, 0.08);
+  box-shadow: inset 0 0 0 2px var(--brand-500);
+}
+
+.cellDay {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--slate-900);
+  line-height: 1;
+}
+
+.cellDayOut {
+  color: var(--slate-300);
+}
+
+.cellDayToday {
+  color: var(--brand-500);
+  font-weight: 700;
+}
+
+/* ── Bar layer ──────────────────────────────────────── */
+
+.bars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.bar {
+  position: absolute;
+  height: 18px;
+  border-radius: var(--radius-md);
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+  border: 0;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  text-align: left;
+}
+
+.bar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+  z-index: 2;
+}
+
+.barClipL {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.barClipR {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.barMark {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.65);
+  flex-shrink: 0;
+}
+
+.barTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.barArrow {
+  font-size: 9px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.more {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--slate-600);
+  background: rgba(248, 250, 252, 0.92);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.more:hover {
+  background: #fff;
+  color: var(--brand-600);
+}
+
+/* ── KPI footer ─────────────────────────────────────── */
+
+.footer {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .footer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.kpi {
+  padding: 0.75rem;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  background: #fff;
+}
+
+.kpiLabel {
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--slate-500);
+}
+
+.kpiValue {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  color: var(--slate-900);
+  margin-top: 0.125rem;
+}
+
+/* ── "+N more" dropdown ────────────────────────────── */
+
+.moreDropdown {
+  position: absolute;
+  z-index: 40;
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lift);
+  padding: 0.25rem;
+  min-width: 240px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.moreItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.375rem 0.5rem;
+  font-size: 12px;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--slate-800);
+}
+
+.moreItem:hover {
+  background: var(--slate-50);
+}
+
+.moreDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.moreItemTitle {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.moreItemProject {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--slate-500);
+  flex-shrink: 0;
+}
+
+/* ── Week view ──────────────────────────────────────── */
+
+.weekHeader {
+  display: grid;
+  grid-template-columns: 60px repeat(7, 1fr);
+  border-bottom: 1px solid var(--slate-200);
+  background: var(--slate-50);
+}
+
+.weekHeaderCell {
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  border-right: 1px solid var(--slate-200);
+}
+
+.weekHeaderCell:last-child {
+  border-right: 0;
+}
+
+.weekHeaderToday {
+  background: rgba(249, 115, 22, 0.08);
+}
+
+.weekHeaderDow {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--slate-500);
+  text-transform: uppercase;
+}
+
+.weekHeaderToday .weekHeaderDow {
+  color: var(--brand-600);
+}
+
+.weekHeaderDay {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--slate-900);
+  margin-top: 0.125rem;
+}
+
+.weekHeaderToday .weekHeaderDay {
+  color: var(--brand-600);
+}
+
+.weekBody {
+  position: relative;
+}
+
+.weekBodyGrid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 60px repeat(7, 1fr);
+}
+
+.weekHours {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--slate-200);
+}
+
+.weekHour {
+  height: 48px;
+  padding: 2px 8px 0 0;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--slate-400);
+}
+
+.weekCol {
+  position: relative;
+  border-right: 1px solid var(--slate-200);
+}
+
+.weekCol:last-child {
+  border-right: 0;
+}
+
+.weekColToday {
+  background: rgba(249, 115, 22, 0.06);
+}
+
+.weekCell {
+  height: 48px;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.weekCellOdd {
+  background: rgba(241, 245, 249, 0.35);
+}
+
+.weekColToday .weekCellOdd {
+  background: rgba(249, 115, 22, 0.04);
+}
+
+/* ── Week event card ───────────────────────────────── */
+
+.weekCard {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  text-align: left;
+  border: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  color: var(--slate-900);
+  transition: background var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+  --weekCardHoverBg: rgba(15, 23, 42, 0.06);
+}
+
+.weekCard:hover {
+  background: var(--weekCardHoverBg) !important;
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-1px);
+  z-index: 2;
+}
+
+.weekCardTimeRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.weekCardTime {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--slate-500);
+}
+
+.weekCardTitle {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--slate-900);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.weekCardProject {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--slate-500);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.weekCardMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  min-width: 0;
+}
+
+.weekCardLock {
+  width: 12px;
+  height: 12px;
+  color: var(--slate-500);
+  flex-shrink: 0;
+}
+
+.weekMore {
+  position: absolute;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--slate-600);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  cursor: pointer;
+  height: 18px;
+  text-align: center;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  z-index: 3;
+}
+
+.weekMore:hover {
+  background: #fff;
+  color: var(--brand-600);
+}
+
+/* ── Now-line (week view) ──────────────────────────── */
+
+.nowLineWrap {
+  position: absolute;
+  height: 2px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.nowLineDot {
+  position: absolute;
+  left: 0;
+  top: -4px;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+  background: var(--brand-500);
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.nowLineBar {
+  height: 2px;
+  background: var(--brand-500);
+}

@@ -10,14 +10,20 @@ import {
 import MembersModal from '@/components/MembersModal';
 import NewTaskModal from '@/components/NewTaskModal';
 import TaskDetailModal from '@/components/TaskDetailModal';
-import { formatMinutes } from '@/lib/format';
+import { formatMinutes, isDateOnlyDueDate } from '@/lib/format';
 
 const TIME_FILTERS = ['Today', 'Week', 'Month'];
 const JOB_KEYS = Object.keys(JOB_LABELS);
 
 function formatDue(iso) {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const d = new Date(iso);
+  if (isDateOnlyDueDate(d)) {
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+  }
+  const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const time = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  return `${date} ${time}`;
 }
 
 function truncate(s, n = 22) {

@@ -6,11 +6,11 @@ import NotificationsBell from '@/components/NotificationsBell';
 import styles from './Topbar.module.css';
 
 const TITLES = [
-  { match: /^\/dashboard/,                label: 'Dashboard' },
-  { match: /^\/project\/[^/]+\/planner/,  label: 'Planner' },
-  { match: /^\/project\/[^/]+\/calendar/, label: 'Calendar' },
-  { match: /^\/project\/[^/]+\/timer/,    label: 'Pomodoro' },
-  { match: /^\/bin/,                      label: 'Bin' },
+  { match: /^\/dashboard/,               label: 'Dashboard' },
+  { match: /^\/calendar/,                label: 'Calendar' },
+  { match: /^\/project\/[^/]+\/planner/, label: 'Planner' },
+  { match: /^\/project\/[^/]+\/timer/,   label: 'Pomodoro' },
+  { match: /^\/bin/,                     label: 'Bin' },
 ];
 
 export default function Topbar({ crumb }) {

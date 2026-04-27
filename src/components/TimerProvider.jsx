@@ -28,7 +28,6 @@ export default function TimerProvider({ children }) {
   const [completedSessions, setCompleted] = useState(0);
   const [heartbeatTick, setHeartbeatTick] = useState(0);
   const hydratedRef = useRef(false);
-  const { setCustomMinutes } = useTimer();
   // ── Hydrate from server on mount ──────────────────────────────────────────
   useEffect(() => {
     let cancelled = false;
@@ -113,8 +112,8 @@ function setCustomMinutes(minutes) {
 
   if (!mins || mins <= 0) return;
 
-  setDurationSec(mins * 60);
-  setRemainingSec(mins * 60);
+  setTotalSec(mins * 60);
+  setRem(mins * 60);
   setRunning(false);
 }
   const startFocus = useCallback(async ({ id, title, projectId, duration }) => {

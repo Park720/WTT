@@ -5,7 +5,6 @@ import { getProjectAccess } from '@/lib/project-access';
 import { notify } from '@/lib/notifications';
 import { JOB_LABELS } from '@/components/ui/constants';
 
-const VALID_JOBS = ['UX_ART', 'PROGRAMMING', 'DESIGNER', 'PUBLISHER'];
 
 export async function POST(req, { params }) {
   const user = await getCurrentUser();
@@ -16,11 +15,10 @@ export async function POST(req, { params }) {
   if (!isOwner) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const { email, job } = await req.json();
+  const cleanJob = job?.trim() || null;
   const normalizedEmail = email?.trim().toLowerCase();
   if (!normalizedEmail) return NextResponse.json({ error: 'Email is required' }, { status: 400 });
-  if (job && !VALID_JOBS.includes(job)) {
-    return NextResponse.json({ error: 'Invalid job role' }, { status: 400 });
-  }
+  
 
   const target = await prisma.user.findUnique({ where: { email: normalizedEmail } });
   if (!target) {
@@ -40,7 +38,7 @@ export async function POST(req, { params }) {
         userId: target.id,
         projectId,
         role: 'MEMBER',
-        job: job || null,
+        job: cleanJob,
       },
       include: { user: { select: { id: true, name: true, email: true } } },
     }),

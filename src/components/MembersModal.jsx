@@ -1,11 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Avatar, Icon, Tag, JOB_LABELS } from '@/components/ui';
+import { Avatar, Icon, Tag } from '@/components/ui';
 import useEscape from '@/hooks/useEscape';
 import { useToast } from '@/components/Toaster';
-
-const JOB_KEYS = Object.keys(JOB_LABELS);
+const DEFAULT_ROLES = [
+  "UX & Art",
+  "Programming",
+  "Designer",
+  "Publisher",
+];
 
 function RoleBadge({ role }) {
   if (role === 'OWNER') {
@@ -20,7 +24,7 @@ function InviteMemberModal({ projectId, onClose, onInvited }) {
   useEscape(onClose);
   const toast = useToast();
   const [email, setEmail] = useState('');
-  const [job, setJob] = useState('PROGRAMMING');
+  const [job, setJob] = useState('Programming');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -73,12 +77,32 @@ function InviteMemberModal({ projectId, onClose, onInvited }) {
           <div>
             <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Job role</label>
             <select
-              value={job}
-              onChange={(e) => setJob(e.target.value)}
+              value={DEFAULT_ROLES.includes(job) ? job : "CUSTOM"}
+              onChange={(e) => {
+  if (e.target.value === "CUSTOM") {
+    setJob("");
+  } else {
+    setJob(e.target.value);
+  }
+}}
               className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
             >
-              {JOB_KEYS.map((k) => <option key={k} value={k}>{JOB_LABELS[k]}</option>)}
+              {DEFAULT_ROLES.map((role) => (
+                <option key={role} value={role}>
+                  {role}
+                </option>
+              ))}
+              <option value="CUSTOM">Custom...</option>
             </select>
+
+            {(!DEFAULT_ROLES.includes(job) || job === "") && (
+              <input
+                value={job}
+                onChange={(e) => setJob(e.target.value)}
+                placeholder="Enter custom role"
+                className="mt-2 w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
+              />
+            )}
           </div>
 
           {error && (
@@ -118,22 +142,30 @@ function MemberRow({ m, projectId, currentUserId, isOwner, onMutate }) {
   const canEditJob = isOwner;
   const canRemove = isOwner && !isSelf;
   const canLeave = isSelf;
+const [customRole, setCustomRole] = useState(m.job || '');
+const [isCustomMode, setIsCustomMode] = useState(
+  !!m.job && !DEFAULT_ROLES.includes(m.job)
+);
+  async function handleJobUpdate(nextJob) {
+    const cleanJob = nextJob?.trim() || null;
 
-  async function handleJobChange(e) {
-    const next = e.target.value || null;
     setError('');
     setPendingJob(true);
+
     const res = await fetch(`/api/projects/${projectId}/members/${m.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ job: next }),
+      body: JSON.stringify({ job: cleanJob }),
     });
+
     setPendingJob(false);
+
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       setError(data.error || 'Failed to update');
       return;
     }
+
     onMutate();
   }
 
@@ -143,45 +175,96 @@ function MemberRow({ m, projectId, currentUserId, isOwner, onMutate }) {
       : isSelf
         ? 'Leave this project? You will lose access.'
         : `Remove ${m.name} from this project?`;
+
     if (!window.confirm(msg)) return;
 
     setError('');
     setPendingRemove(true);
-    const res = await fetch(`/api/projects/${projectId}/members/${m.id}`, { method: 'DELETE' });
+
+    const res = await fetch(`/api/projects/${projectId}/members/${m.id}`, {
+      method: 'DELETE',
+    });
+
     setPendingRemove(false);
+
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       setError(data.error || 'Failed to remove');
       return;
     }
+
     onMutate();
   }
 
   return (
     <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50">
       <Avatar user={{ name: m.name, email: m.email }} size={32} />
+
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-[13.5px] font-medium text-slate-900 truncate">{m.name}</span>
+          <span className="text-[13.5px] font-medium text-slate-900 truncate">
+            {m.name}
+          </span>
           <RoleBadge role={m.role} />
-          {isSelf && <span className="text-[10px] text-slate-400 font-mono">you</span>}
+          {isSelf && (
+            <span className="text-[10px] text-slate-400 font-mono">you</span>
+          )}
         </div>
-        <div className="text-[11.5px] font-mono text-slate-500 truncate">{m.email}</div>
-        {error && <div className="mt-1 text-[11px] text-red-600">{error}</div>}
+
+        <div className="text-[11.5px] font-mono text-slate-500 truncate">
+          {m.email}
+        </div>
+
+        {error && (
+          <div className="mt-1 text-[11px] text-red-600">{error}</div>
+        )}
       </div>
 
       {canEditJob ? (
-        <select
-          value={m.job ?? ''}
-          onChange={handleJobChange}
-          disabled={pendingJob}
-          className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-[12px] focus:outline-none focus:border-orange-400 disabled:opacity-60"
-        >
-          <option value="">No job</option>
-          {JOB_KEYS.map((k) => <option key={k} value={k}>{JOB_LABELS[k]}</option>)}
-        </select>
+        <div className="flex flex-col items-end gap-1">
+          <select
+            value={
+              !m.job
+                ? ''
+                : DEFAULT_ROLES.includes(m.job)
+                  ? m.job
+                  : 'CUSTOM'
+            }
+            disabled={pendingJob}
+            onChange={(e) => {
+  if (e.target.value === 'CUSTOM') {
+    setIsCustomMode(true);
+    setCustomRole('');
+  } else {
+    setIsCustomMode(false);
+    setCustomRole(e.target.value);
+    handleJobUpdate(e.target.value);
+  }
+}}
+            className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-[12px] focus:outline-none focus:border-orange-400 disabled:opacity-60"
+          >
+            <option value="">No job</option>
+            {DEFAULT_ROLES.map((role) => (
+              <option key={role} value={role}>
+                {role}
+              </option>
+            ))}
+            <option value="CUSTOM">Custom...</option>
+          </select>
+
+          {isCustomMode && (
+            <input
+  value={customRole}
+  onChange={(e) => setCustomRole(e.target.value)}
+  onBlur={() => handleJobUpdate(customRole)}
+  placeholder="Custom role"
+  disabled={pendingJob}
+  className="h-8 w-[130px] rounded-lg border border-slate-200 bg-white px-2 text-[12px] focus:outline-none focus:border-orange-400 disabled:opacity-60"
+/>
+          )}
+        </div>
       ) : m.job ? (
-        <Tag tone="slate">{JOB_LABELS[m.job]}</Tag>
+        <Tag tone="slate">{m.job}</Tag>
       ) : (
         <span className="text-[11px] text-slate-400 font-mono">no job</span>
       )}
@@ -197,6 +280,7 @@ function MemberRow({ m, projectId, currentUserId, isOwner, onMutate }) {
           <Icon.X className="w-3.5 h-3.5" />
         </button>
       )}
+
       {canLeave && !canRemove && (
         <button
           type="button"

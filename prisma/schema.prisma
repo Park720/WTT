@@ -12,12 +12,7 @@ enum Role {
   MEMBER
 }
 
-enum Job {
-  UX_ART
-  PROGRAMMING
-  DESIGNER
-  PUBLISHER
-}
+
 
 enum Status {
   TODO
@@ -83,7 +78,7 @@ model ProjectMember {
   userId    String
   projectId String
   role      Role     @default(MEMBER)
-  job       Job?
+  job       String?
   joinedAt  DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id])

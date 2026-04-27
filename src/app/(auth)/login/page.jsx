@@ -166,18 +166,19 @@ export default function LoginPage() {
                 <div className="flex-1 h-px bg-slate-200" />
               </div>
 
-              <button
-                type="button"
-                className="w-full h-10 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[13.5px] font-medium flex items-center justify-center gap-2.5"
-              >
-                <svg viewBox="0 0 24 24" className="w-4 h-4">
-                  <path fill="#4285F4" d="M22 12.3c0-.8-.1-1.4-.2-2H12v3.8h5.7c-.1 1-.8 2.5-2.3 3.5l3.6 2.8c2.1-2 3.3-4.8 3.3-8.1Z"/>
-                  <path fill="#34A853" d="m7.6 14.3-.8.6-2.9 2.3A10 10 0 0 0 12 22c2.7 0 5-.9 6.6-2.4l-3.6-2.8c-1 .7-2.2 1.1-3.6 1.1A6.3 6.3 0 0 1 7.6 14.3Z"/>
-                  <path fill="#FBBC05" d="M3.9 8.4a9.9 9.9 0 0 0 0 7.1l3.7-2.9a6 6 0 0 1 0-3.8Z"/>
-                  <path fill="#EA4335" d="M12 5.6c1.9 0 3.2.8 4 1.5l3-2.9A10 10 0 0 0 12 2a10 10 0 0 0-8.1 4.2l3.7 2.9A6 6 0 0 1 12 5.6Z"/>
-                </svg>
-                Continue with Google
-              </button>
+             <button
+            type="button"
+            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+            className="w-full h-10 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-[13.5px] font-medium flex items-center justify-center gap-2.5"
+          >
+            <svg viewBox="0 0 24 24" className="w-4 h-4">
+              <path fill="#4285F4" d="M22 12.3c0-.8-.1-1.4-.2-2H12v3.8h5.7c-.1 1-.8 2.5-2.3 3.5l3.6 2.8c2.1-2 3.3-4.8 3.3-8.1Z"/>
+              <path fill="#34A853" d="m7.6 14.3-.8.6-2.9 2.3A10 10 0 0 0 12 22c2.7 0 5-.9 6.6-2.4l-3.6-2.8c-1 .7-2.2 1.1-3.6 1.1A6.3 6.3 0 0 1 7.6 14.3Z"/>
+              <path fill="#FBBC05" d="M3.9 8.4a9.9 9.9 0 0 0 0 7.1l3.7-2.9a6 6 0 0 1 0-3.8Z"/>
+              <path fill="#EA4335" d="M12 5.6c1.9 0 3.2.8 4 1.5l3-2.9A10 10 0 0 0 12 2a10 10 0 0 0-8.1 4.2l3.7 2.9A6 6 0 0 1 12 5.6Z"/>
+            </svg>
+               Continue with Google
+            </button>
             </form>
           </div>
 

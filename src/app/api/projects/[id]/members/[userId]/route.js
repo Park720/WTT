@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/session';
 import { getProjectAccess } from '@/lib/project-access';
 
-const VALID_JOBS = ['UX_ART', 'PROGRAMMING', 'DESIGNER', 'PUBLISHER'];
+
 
 export async function PUT(req, { params }) {
   const user = await getCurrentUser();
@@ -14,9 +14,7 @@ export async function PUT(req, { params }) {
   if (!isOwner) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const { job } = await req.json();
-  if (job !== null && !VALID_JOBS.includes(job)) {
-    return NextResponse.json({ error: 'Invalid job role' }, { status: 400 });
-  }
+
 
   const existing = await prisma.projectMember.findUnique({
     where: { userId_projectId: { userId, projectId } },

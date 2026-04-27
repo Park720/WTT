@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
-
+import { useToast } from '@/components/Toaster';
 export const TIMER_MODES = {
   focus: { key: 'focus', label: 'Focus',       minutes: 25 },
   short: { key: 'short', label: 'Short break', minutes: 5  },
@@ -28,7 +28,7 @@ export default function TimerProvider({ children }) {
   const [completedSessions, setCompleted] = useState(0);
   const [heartbeatTick, setHeartbeatTick] = useState(0);
   const hydratedRef = useRef(false);
-
+  const { setCustomMinutes } = useTimer();
   // ── Hydrate from server on mount ──────────────────────────────────────────
   useEffect(() => {
     let cancelled = false;
@@ -82,25 +82,41 @@ export default function TimerProvider({ children }) {
     }, 60000);
     return () => clearInterval(id);
   }, [running, activeSession]);
-
+const toast = useToast();
   // When countdown hits 0 naturally, auto-end the session and bump the counter.
   useEffect(() => {
-    if (remainingSec !== 0 || !running) return;
-    setRunning(false);
-    setCompleted((n) => n + 1);
-    if (activeSession) {
-      fetch(`/api/timer/${activeSession.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ completed: true }),
-      }).catch(() => {});
-      setActive(null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [remainingSec]);
+  if (remainingSec !== 0 || !running) return;
+
+  setRunning(false);
+
+  toast.show('Timer done! Nice work.', {
+    type: 'success',
+    duration: 5000,
+  });
+
+  setCompleted((n) => n + 1);
+
+  if (activeSession) {
+    fetch(`/api/timer/${activeSession.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ completed: true }),
+    }).catch(() => {});
+
+    setActive(null);
+  }
+}, [remainingSec, running, activeSession, toast]);
 
   // ── Actions ───────────────────────────────────────────────────────────────
+function setCustomMinutes(minutes) {
+  const mins = Number(minutes);
 
+  if (!mins || mins <= 0) return;
+
+  setDurationSec(mins * 60);
+  setRemainingSec(mins * 60);
+  setRunning(false);
+}
   const startFocus = useCallback(async ({ id, title, projectId, duration }) => {
     const minutes = duration ?? Math.floor(totalSec / 60);
     const res = await fetch(`/api/tasks/${id}/timer`, {
@@ -177,7 +193,6 @@ export default function TimerProvider({ children }) {
     setTotalSec(TIMER_MODES[mode].minutes * 60);
     setRem(TIMER_MODES[mode].minutes * 60);
   }, [activeSession, mode]);
-
   // Flat implementation (no nested setState updaters). React StrictMode
   // double-invokes state updater functions, so nesting a `setRem` call
   // inside a `setTotalSec` updater caused the delta to apply twice.
@@ -206,7 +221,7 @@ export default function TimerProvider({ children }) {
     mode, modes: TIMER_MODES,
     activeSession, running, totalSec, remainingSec, completedSessions,
     heartbeatTick,
-    startFocus, pause, resume, reset, skip, changeMode, endSession, addMinutes,
+    startFocus, pause, resume, reset, skip, changeMode, endSession, addMinutes, setCustomMinutes,
     MIN_TOTAL_SEC, MAX_TOTAL_SEC,
   };
 

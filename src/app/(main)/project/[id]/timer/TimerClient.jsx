@@ -337,21 +337,24 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
             </div>
 
             {activeSession && (
-              <div className="mt-5 flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => endSession({ markDone: false })}
-                  className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 text-[12px] font-medium hover:bg-slate-50"
-                >
-                  End session
-                </button>
-                <button
-                  type="button"
-                  onClick={() => endSession({ markDone: true })}
-                  className="px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-[12px] font-medium hover:bg-emerald-600 inline-flex items-center gap-1.5"
-                >
-                  <Icon.Check className="w-3.5 h-3.5" /> End &amp; mark done
-                </button>
+              <div className="mt-4 w-full max-w-[320px]">
+                <div className="h-px bg-slate-200 mb-4" />
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    type="button"
+                    onClick={() => endSession({ markDone: false })}
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-[13px] font-medium hover:bg-slate-50 disabled:opacity-50 transition-colors"
+                  >
+                    End session
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => endSession({ markDone: true })}
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-[13px] font-semibold hover:bg-emerald-700 hover:shadow-lift disabled:opacity-50 transition-all inline-flex items-center justify-center gap-1.5"
+                  >
+                    <Icon.Check className="w-3.5 h-3.5" /> End &amp; mark done
+                  </button>
+                </div>
               </div>
             )}
           </div>

@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { Icon, PRIORITY } from '@/components/ui';
 import useEscape from '@/hooks/useEscape';
+import { useToast } from '@/components/Toaster';
 import { combineDueDateInputs } from '@/lib/format';
 
 const PRIORITY_KEYS = Object.keys(PRIORITY);
 
 export default function NewTaskModal({ projectId, parent, members = [], onClose, onCreated, zIndex = 60 }) {
   useEscape(onClose);
+  const toast = useToast();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -24,27 +26,36 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
     e.preventDefault();
     setError('');
     setLoading(true);
-    const res = await fetch(`/api/projects/${projectId}/tasks`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title,
-        description: description || undefined,
-        priority,
-        dueDate: combineDueDateInputs(dueDate, dueTime) ?? undefined,
-        assigneeId: assigneeId || undefined,
-        parentTaskId: parent?.id,
-        estimatedMinutes: estimatedHours ? Number(estimatedHours) * 60 : undefined,
-      }),
-    });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error || 'Failed to create task');
+    try {
+      const res = await fetch(`/api/projects/${projectId}/tasks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          description: description || undefined,
+          priority,
+          dueDate: combineDueDateInputs(dueDate, dueTime) ?? undefined,
+          assigneeId: assigneeId || undefined,
+          parentTaskId: parent?.id,
+          estimatedMinutes: estimatedHours ? Number(estimatedHours) * 60 : undefined,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const msg = data.error || 'Failed to create task';
+        setError(msg);
+        toast.show(msg, { type: 'error' });
+        setLoading(false);
+        return;
+      }
+      toast.show(parent ? 'Subtask added' : 'Task added', { type: 'success' });
       setLoading(false);
-      return;
+      onCreated();
+    } catch {
+      setError("Couldn't reach the server. Please retry.");
+      toast.show("Couldn't reach the server. Please retry.", { type: 'error' });
+      setLoading(false);
     }
-    setLoading(false);
-    onCreated();
   }
 
   return (

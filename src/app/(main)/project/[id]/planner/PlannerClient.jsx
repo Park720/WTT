@@ -10,6 +10,7 @@ import {
 import MembersModal from '@/components/MembersModal';
 import NewTaskModal from '@/components/NewTaskModal';
 import TaskDetailModal from '@/components/TaskDetailModal';
+import { useToast } from '@/components/Toaster';
 import { formatMinutes, isDateOnlyDueDate } from '@/lib/format';
 
 const TIME_FILTERS = ['Today', 'Week', 'Month'];
@@ -365,6 +366,7 @@ export default function PlannerClient({
   const [showMembers, setShowMembers] = useState(false);
   const [currentMembers, setCurrentMembers] = useState(members);
   const [busy, setBusy] = useState(false);
+  const toast = useToast();
 
   const urlTaskId = searchParams.get('task');
   const [detailTaskId, setDetailTaskId] = useState(urlTaskId);
@@ -401,34 +403,45 @@ export default function PlannerClient({
     refresh(showBin);
   }, [showBin]);
 
-  async function mutate(fn) {
+  async function mutate(fn, { successMessage } = {}) {
     setBusy(true);
     try {
       const res = await fn();
       if (res && !res.ok) {
         const body = await res.json().catch(() => ({}));
-        alert(body.error || `Request failed (${res.status})`);
+        toast.show(body.error || `Couldn't save. Please retry.`, { type: 'error' });
+      } else if (successMessage) {
+        toast.show(successMessage, { type: 'success' });
       }
       await refresh();
+    } catch {
+      toast.show("Couldn't reach the server. Please retry.", { type: 'error' });
     } finally {
       setBusy(false);
     }
   }
 
-  const putStatus = (id, status) =>
-    mutate(() =>
-      fetch(`/api/tasks/${id}`, {
+  const putStatus = (id, status, opts) =>
+    mutate(
+      () => fetch(`/api/tasks/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
       }),
+      opts,
     );
-  const requestReview = (id) => putStatus(id, 'PENDING_REVIEW');
-  const approve = (id) => putStatus(id, 'DONE');
-  const reject = (id) => putStatus(id, 'IN_PROGRESS');
+  const requestReview = (id) => putStatus(id, 'PENDING_REVIEW', { successMessage: 'Review requested' });
+  const approve = (id) => putStatus(id, 'DONE',         { successMessage: 'Task approved as DONE' });
+  const reject  = (id) => putStatus(id, 'IN_PROGRESS',  { successMessage: 'Sent back for revision' });
   const startWork = (s) => putStatus(s.id, 'IN_PROGRESS');
-  const binTask = (id) => mutate(() => fetch(`/api/tasks/${id}/bin`, { method: 'PUT' }));
-  const restoreTask = (id) => mutate(() => fetch(`/api/tasks/${id}/restore`, { method: 'PUT' }));
+  const binTask = (id) => mutate(
+    () => fetch(`/api/tasks/${id}/bin`, { method: 'PUT' }),
+    { successMessage: 'Task moved to bin' },
+  );
+  const restoreTask = (id) => mutate(
+    () => fetch(`/api/tasks/${id}/restore`, { method: 'PUT' }),
+    { successMessage: 'Task restored' },
+  );
 
   // Member + role filters compose with AND. Within members it's OR
   // (multiple selected = tasks assigned to any of them). Empty set on

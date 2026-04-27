@@ -28,6 +28,8 @@ export default function TimerProvider({ children }) {
   const [completedSessions, setCompleted] = useState(0);
   const [heartbeatTick, setHeartbeatTick] = useState(0);
   const hydratedRef = useRef(false);
+  const toast = useToast();
+
   // ── Hydrate from server on mount ──────────────────────────────────────────
   useEffect(() => {
     let cancelled = false;
@@ -81,7 +83,7 @@ export default function TimerProvider({ children }) {
     }, 60000);
     return () => clearInterval(id);
   }, [running, activeSession]);
-const toast = useToast();
+
   // When countdown hits 0 naturally, auto-end the session and bump the counter.
   useEffect(() => {
   if (remainingSec !== 0 || !running) return;
@@ -182,16 +184,34 @@ function setCustomMinutes(minutes) {
       setRem(TIMER_MODES[mode].minutes * 60);
       return;
     }
-    await fetch(`/api/timer/${activeSession.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ markDone }),
-    });
+    const elapsedMin = Math.max(
+      0,
+      Math.min(
+        activeSession.duration ?? Math.floor(totalSec / 60),
+        Math.floor((Date.now() - new Date(activeSession.startedAt).getTime()) / 60000),
+      ),
+    );
+    try {
+      const res = await fetch(`/api/timer/${activeSession.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ markDone }),
+      });
+      if (!res.ok) throw new Error('end-session failed');
+      toast.show(
+        markDone
+          ? `Session ended · ${elapsedMin}m logged · marked done`
+          : `Session ended · ${elapsedMin}m logged`,
+        { type: 'success', duration: 4000 },
+      );
+    } catch {
+      toast.show("Couldn't end the session. Please retry.", { type: 'error' });
+    }
     setActive(null);
     setRunning(false);
     setTotalSec(TIMER_MODES[mode].minutes * 60);
     setRem(TIMER_MODES[mode].minutes * 60);
-  }, [activeSession, mode]);
+  }, [activeSession, mode, totalSec, toast]);
   // Flat implementation (no nested setState updaters). React StrictMode
   // double-invokes state updater functions, so nesting a `setRem` call
   // inside a `setTotalSec` updater caused the delta to apply twice.

@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import { Icon } from '@/components/ui';
 import useEscape from '@/hooks/useEscape';
+import { useToast } from '@/components/Toaster';
 import styles from './DeleteProjectDialog.module.css';
 
 export default function DeleteProjectDialog({ project, onClose, onDeleted }) {
   useEscape(onClose);
+  const toast = useToast();
   const [confirm, setConfirm] = useState('');
   const [busy, setBusy]       = useState(false);
   const [error, setError]     = useState('');
@@ -24,9 +26,12 @@ export default function DeleteProjectDialog({ project, onClose, onDeleted }) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error || 'Failed to delete project');
       }
+      toast.show(`Project "${project.name}" deleted`, { type: 'success' });
       onDeleted?.(project);
     } catch (err) {
-      setError(err.message);
+      const msg = err.message || "Couldn't delete the project";
+      setError(msg);
+      toast.show(msg, { type: 'error' });
       setBusy(false);
     }
   }

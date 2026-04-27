@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Icon } from '@/components/ui';
 import useEscape from '@/hooks/useEscape';
+import { useToast } from '@/components/Toaster';
 import styles from './EditProjectModal.module.css';
 
 const PRESET_COLORS = [
@@ -12,6 +13,7 @@ const PRESET_COLORS = [
 
 export default function EditProjectModal({ project, onClose, onSaved }) {
   useEscape(onClose);
+  const toast = useToast();
   const [name, setName]               = useState(project.name ?? '');
   const [description, setDescription] = useState(project.description ?? '');
   const [color, setColor]             = useState(project.color ?? PRESET_COLORS[0]);
@@ -36,9 +38,12 @@ export default function EditProjectModal({ project, onClose, onSaved }) {
         throw new Error(body.error || 'Failed to save project');
       }
       const updated = await res.json();
+      toast.show(`Project "${updated.name ?? name.trim()}" updated`, { type: 'success' });
       onSaved?.(updated);
     } catch (err) {
-      setError(err.message);
+      const msg = err.message || "Couldn't save the project";
+      setError(msg);
+      toast.show(msg, { type: 'error' });
       setBusy(false);
     }
   }

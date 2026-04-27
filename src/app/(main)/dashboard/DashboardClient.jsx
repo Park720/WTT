@@ -308,6 +308,7 @@ function EmptyProjectCard({ onClick }) {
 
 function NewProjectModal({ onClose, onCreated }) {
   useEscape(onClose);
+  const toast = useToast();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [color, setColor] = useState(COLOR_SWATCHES[0]);
@@ -318,19 +319,28 @@ function NewProjectModal({ onClose, onCreated }) {
     e.preventDefault();
     setError('');
     setLoading(true);
-    const res = await fetch('/api/projects', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, description, color }),
-    });
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error || 'Failed to create project');
+    try {
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, description, color }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const msg = data.error || 'Failed to create project';
+        setError(msg);
+        toast.show(msg, { type: 'error' });
+        setLoading(false);
+        return;
+      }
+      toast.show(`Project "${name}" created`, { type: 'success' });
       setLoading(false);
-      return;
+      onCreated();
+    } catch {
+      setError("Couldn't reach the server. Please retry.");
+      toast.show("Couldn't reach the server. Please retry.", { type: 'error' });
+      setLoading(false);
     }
-    setLoading(false);
-    onCreated();
   }
 
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { STATUS, JOB_LABELS } from '@/components/ui/constants';
+import { STATUS } from '@/components/ui/constants';
 
 function hours(mins) {
   if (!mins) return 0;
@@ -226,7 +226,7 @@ export default function PrintView({ project, tasks, members, exporter, exportedA
         <h2>Team workload</h2>
         {Object.entries(workloadByJob).map(([jobKey, peeps]) => (
           <div key={jobKey} style={{ marginBottom: 14 }} className="task-group">
-            <h3>{JOB_LABELS[jobKey] ?? 'No job role'} <span className="muted mono" style={{ fontSize: 10 }}>· {peeps.length}</span></h3>
+            <h3>{jobKey === 'UNASSIGNED' ? 'No job role' : jobKey} <span className="muted mono" style={{ fontSize: 10 }}>· {peeps.length}</span></h3>
             <table>
               <thead>
                 <tr>

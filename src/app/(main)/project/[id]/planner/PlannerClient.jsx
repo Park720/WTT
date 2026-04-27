@@ -5,7 +5,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import {
   Avatar, AvatarStack, StatusPill, PriorityDot, Tag, ProgressBar, CircularProgress,
   Checkbox, Icon,
-  STATUS, JOB_LABELS,
+  STATUS,
 } from '@/components/ui';
 import MembersModal from '@/components/MembersModal';
 import NewTaskModal from '@/components/NewTaskModal';
@@ -13,7 +13,6 @@ import TaskDetailModal from '@/components/TaskDetailModal';
 import { formatMinutes, isDateOnlyDueDate } from '@/lib/format';
 
 const TIME_FILTERS = ['Today', 'Week', 'Month'];
-const JOB_KEYS = Object.keys(JOB_LABELS);
 
 function formatDue(iso) {
   if (!iso) return null;
@@ -79,7 +78,7 @@ function ManagerCard({ t, onApprove, onReject, onBin, onAddSubtask, onOpenTask, 
           <h3 className="text-[15px] font-semibold leading-snug text-slate-900">{t.title}</h3>
           <div className="mt-1 flex items-center gap-2 flex-wrap">
             <StatusPill status={t.status} size="sm" />
-            {t.job && <Tag tone="slate">{JOB_LABELS[t.job]}</Tag>}
+            {t.job && <Tag tone="slate">{t.job}</Tag>}
             {t.assignee && (
               <div className="ml-auto">
                 <Avatar user={t.assignee} size={22} />
@@ -219,7 +218,7 @@ function MemberChecklistCard({ t, currentUser, isOwner, onRequestReview, onAppro
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="text-[14.5px] font-semibold text-slate-900 truncate">{t.title}</h3>
-            {t.job && <Tag tone="slate">{JOB_LABELS[t.job]}</Tag>}
+            {t.job && <Tag tone="slate">{t.job}</Tag>}
             <PriorityDot priority={t.priority} withLabel />
           </div>
           <div className="mt-1 text-[11.5px] font-mono text-slate-500">
@@ -355,7 +354,12 @@ export default function PlannerClient({
   const [flat, setFlat] = useState(initialFlat);
   const [role, setRole] = useState(isOwner ? 'manager' : 'member');
   const [timeFilter, setTimeFilter] = useState('Week');
-  const [jobFilter, setJobFilter] = useState(new Set(JOB_KEYS));
+  // Empty set = no role filter (all tasks visible). Roles are free-form
+  // strings now (custom or default like "UX & Art"), so we don't seed
+  // this with a hardcoded enum list.
+  const [jobFilter, setJobFilter] = useState(() => new Set());
+  // Empty set = no member filter. Multi-select within members is OR.
+  const [memberFilter, setMemberFilter] = useState(() => new Set());
   const [showBin, setShowBin] = useState(false);
   const [newTaskCtx, setNewTaskCtx] = useState(null); // null | { parent: task|null }
   const [showMembers, setShowMembers] = useState(false);
@@ -426,10 +430,21 @@ export default function PlannerClient({
   const binTask = (id) => mutate(() => fetch(`/api/tasks/${id}/bin`, { method: 'PUT' }));
   const restoreTask = (id) => mutate(() => fetch(`/api/tasks/${id}/restore`, { method: 'PUT' }));
 
-  const filteredTree = useMemo(
-    () => tree.filter((t) => !t.job || jobFilter.has(t.job)),
-    [tree, jobFilter],
-  );
+  // Member + role filters compose with AND. Within members it's OR
+  // (multiple selected = tasks assigned to any of them). Empty set on
+  // either filter means "no constraint from this dimension".
+  const filteredTree = useMemo(() => {
+    if (memberFilter.size === 0 && jobFilter.size === 0) return tree;
+    return tree.filter((t) => {
+      if (memberFilter.size > 0) {
+        if (!t.assigneeId || !memberFilter.has(t.assigneeId)) return false;
+      }
+      if (jobFilter.size > 0) {
+        if (!t.job || !jobFilter.has(t.job)) return false;
+      }
+      return true;
+    });
+  }, [tree, memberFilter, jobFilter]);
 
   const statusCounts = useMemo(() => {
     const counts = {};
@@ -443,6 +458,59 @@ export default function PlannerClient({
     return counts;
   }, [tree]);
 
+  // Roles derived from the project's actual members + any role currently
+  // appearing on a task (covers a member who's been removed but whose
+  // tasks still carry their old role string).
+  const projectRoles = useMemo(() => {
+    const roles = new Set();
+    for (const m of currentMembers) if (m.job?.trim()) roles.add(m.job);
+    for (const t of tree) if (t.job?.trim()) roles.add(t.job);
+    return Array.from(roles).sort((a, b) => a.localeCompare(b));
+  }, [currentMembers, tree]);
+
+  // Roster for the Members filter: current members plus any task assignee
+  // who isn't a member anymore (so their orphaned tasks can still be
+  // surfaced under their name with a "(left)" tag).
+  const memberRoster = useMemo(() => {
+    const byId = new Map();
+    for (const m of currentMembers) {
+      byId.set(m.id, { id: m.id, name: m.name, email: m.email, isLeft: false });
+    }
+    for (const t of tree) {
+      if (t.assigneeId && t.assignee && !byId.has(t.assigneeId)) {
+        byId.set(t.assigneeId, {
+          id: t.assigneeId,
+          name: t.assignee.name,
+          email: t.assignee.email,
+          isLeft: true,
+        });
+      }
+    }
+    return Array.from(byId.values());
+  }, [currentMembers, tree]);
+
+  const otherMembers = useMemo(
+    () => memberRoster
+      .filter((m) => m.id !== currentUser.id)
+      .sort((a, b) => {
+        if (a.isLeft !== b.isLeft) return a.isLeft ? 1 : -1;
+        return a.name.localeCompare(b.name);
+      }),
+    [memberRoster, currentUser.id],
+  );
+
+  // Per-member task counts respect the OTHER active filters (role)
+  // so each chip previews how it would narrow the current view.
+  const memberTaskCounts = useMemo(() => {
+    const counts = new Map();
+    for (const t of tree) {
+      if (!t.assigneeId) continue;
+      if (jobFilter.size > 0 && (!t.job || !jobFilter.has(t.job))) continue;
+      counts.set(t.assigneeId, (counts.get(t.assigneeId) ?? 0) + 1);
+    }
+    return counts;
+  }, [tree, jobFilter]);
+
   const subtaskTotal = useMemo(
     () => filteredTree.reduce((n, t) => n + t.subtasks.length, 0),
     [filteredTree],
@@ -452,6 +520,14 @@ export default function PlannerClient({
     setJobFilter((prev) => {
       const next = new Set(prev);
       next.has(j) ? next.delete(j) : next.add(j);
+      return next;
+    });
+  }
+
+  function toggleMember(id) {
+    setMemberFilter((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
   }
@@ -472,16 +548,97 @@ export default function PlannerClient({
           ))}
         </div>
 
+        {/* Members filter */}
+        {otherMembers.length > 0 && (
+          <div className="mt-6 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-500">
+            Members
+          </div>
+        )}
+        <div className={`${otherMembers.length > 0 ? 'mt-2' : 'mt-6'} flex flex-col gap-1 max-h-[300px] overflow-y-auto nice-scroll`}>
+          {(() => {
+            const meActive = memberFilter.has(currentUser.id);
+            const meCount  = memberTaskCounts.get(currentUser.id) ?? 0;
+            return (
+              <button
+                type="button"
+                onClick={() => toggleMember(currentUser.id)}
+                aria-pressed={meActive}
+                className={`flex items-center gap-2 px-2.5 py-2 rounded-lg text-[13px] border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400
+                  ${meActive
+                    ? 'bg-orange-50 text-orange-700 border-orange-200'
+                    : 'border-transparent text-slate-700 hover:bg-slate-50'}`}
+              >
+                <Icon.User className="w-3.5 h-3.5" />
+                <span>My tasks</span>
+                <span className={`ml-auto font-mono text-[11px] ${meActive ? 'font-semibold text-orange-700' : 'text-slate-400'}`}>
+                  {meCount}
+                </span>
+              </button>
+            );
+          })()}
+          {otherMembers.map((m) => {
+            const active = memberFilter.has(m.id);
+            const count  = memberTaskCounts.get(m.id) ?? 0;
+            return (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => toggleMember(m.id)}
+                aria-pressed={active}
+                className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[13px] border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400
+                  ${active
+                    ? 'bg-slate-100 text-slate-900 border-slate-200'
+                    : 'border-transparent text-slate-500 hover:bg-slate-50'}`}
+              >
+                <Avatar user={m} size={22} />
+                <span className="truncate flex-1 text-left">
+                  {m.name}
+                  {m.isLeft && (
+                    <span className="ml-1 text-[10.5px] italic text-slate-400">(left)</span>
+                  )}
+                </span>
+                <span className={`font-mono text-[11px] ${active ? 'font-semibold text-slate-900' : 'text-slate-400'}`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        {memberFilter.size > 0 && (
+          <button
+            type="button"
+            onClick={() => setMemberFilter(new Set())}
+            className="mt-1.5 ml-2.5 text-[10.5px] text-slate-500 hover:underline"
+          >
+            Clear filter
+          </button>
+        )}
+
         <div className="mt-6 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-500">Roles</div>
         <div className="mt-2 flex flex-col gap-1">
-          {JOB_KEYS.map((j) => (
-            <label key={j} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50">
-              <Checkbox checked={jobFilter.has(j)} onChange={() => toggleJob(j)} />
-              <span className="text-[13px] text-slate-700">{JOB_LABELS[j]}</span>
-              <span className="ml-auto font-mono text-[11px] text-slate-400">{jobCounts[j] ?? 0}</span>
-            </label>
-          ))}
+          {projectRoles.length === 0 ? (
+            <div className="px-2.5 py-1.5 text-[12px] text-slate-400 italic">
+              No roles assigned yet.
+            </div>
+          ) : (
+            projectRoles.map((j) => (
+              <label key={j} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50">
+                <Checkbox checked={jobFilter.has(j)} onChange={() => toggleJob(j)} />
+                <span className="text-[13px] text-slate-700">{j}</span>
+                <span className="ml-auto font-mono text-[11px] text-slate-400">{jobCounts[j] ?? 0}</span>
+              </label>
+            ))
+          )}
         </div>
+        {jobFilter.size > 0 && (
+          <button
+            type="button"
+            onClick={() => setJobFilter(new Set())}
+            className="mt-1.5 ml-2.5 text-[10.5px] text-slate-500 hover:underline"
+          >
+            Clear filter
+          </button>
+        )}
 
         <div className="mt-6 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-500">Status</div>
         <div className="mt-2 space-y-1">

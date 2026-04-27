@@ -3,7 +3,6 @@ import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/session';
 import { getProjectAccess } from '@/lib/project-access';
 import { notify } from '@/lib/notifications';
-import { JOB_LABELS } from '@/components/ui/constants';
 
 
 export async function POST(req, { params }) {
@@ -47,7 +46,7 @@ export async function POST(req, { params }) {
 
   await notify(target.id, {
     type: 'ASSIGNED',
-    message: `Added to ${project?.name ?? 'a project'}${job ? ` as ${JOB_LABELS[job]}` : ''}`,
+    message: `Added to ${project?.name ?? 'a project'}${cleanJob ? ` as ${cleanJob}` : ''}`,
     delivery: 'BADGE',
   });
 

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import {
   Avatar, StatusPill, PriorityDot, Tag, Icon, Checkbox,
-  STATUS, PRIORITY, JOB_LABELS,
+  STATUS, PRIORITY,
 } from '@/components/ui';
 import NewTaskModal from '@/components/NewTaskModal';
 import useEscape from '@/hooks/useEscape';
@@ -438,7 +438,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-2 flex-wrap min-w-0">
                 {task && <StatusPill status={task.status} size="sm" />}
-                {task?.job && <Tag tone="slate">{JOB_LABELS[task.job]}</Tag>}
+                {task?.job && <Tag tone="slate">{task.job}</Tag>}
                 {task && <span className="font-mono text-[11px] text-slate-400">#{task.id.slice(-5).toUpperCase()}</span>}
               </div>
               <button type="button" onClick={onClose} className="p-1 rounded hover:bg-slate-100 text-slate-400 shrink-0">

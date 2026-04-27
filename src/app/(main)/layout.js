@@ -18,7 +18,7 @@ export default async function MainLayout({ children }) {
 
   return (
   <div className="min-h-screen flex">
-    <Sidebar user={{ id: user.id, name: user.name, email: user.email }} />
+    <Sidebar user={{ id: user.id, name: user.name, email: user.email }} projects={projects} />
     <div className="flex-1 min-w-0 flex flex-col">
       <Topbar user={{ id: user.id, name: user.name, email: user.email }} />
       {children}

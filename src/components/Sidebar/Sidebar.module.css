@@ -246,3 +246,104 @@
 .menuItem:hover {
   background: rgba(255, 255, 255, 0.05);
 }
+
+/* ── Mobile bottom navigation ───────────────────────────── */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed !important;
+    left: 12px;
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    top: auto !important;
+    z-index: 999;
+
+    width: auto !important;
+    height: 66px;
+    min-height: 66px;
+    flex-direction: row;
+    align-items: center;
+
+    border-radius: 24px;
+    background: rgba(15, 23, 42, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 18px 40px -18px rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    overflow: hidden;
+  }
+
+  .header,
+  .searchWrap,
+  .sectionTitle,
+  .projectList,
+  .footer {
+    display: none !important;
+  }
+
+  .nav {
+    margin-top: 0 !important;
+    width: 100%;
+    height: 100%;
+    flex: none;
+    padding: 6px;
+    overflow: visible !important;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .navItem {
+    width: 100%;
+    height: 54px;
+    padding: 6px 4px;
+    border-radius: 18px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    font-size: 10px;
+    color: var(--slate-300);
+  }
+
+  .navItem:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+  }
+
+  .navItemActive {
+    background: rgba(249, 115, 22, 0.2);
+    color: #ffffff;
+  }
+
+  .navItemDisabled {
+    opacity: 0.45;
+  }
+
+  .navItemIcon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .navItemLabel {
+    max-width: 100%;
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .activeDot {
+    display: none !important;
+  }
+
+  .menu {
+    display: none !important;
+  }
+}

@@ -455,10 +455,10 @@ export default function PlannerClient({
   }
 
   return (
-    <div className="flex">
-      <aside className="w-[240px] shrink-0 border-r border-slate-200 bg-white p-4 min-h-[calc(100vh-56px)]">
+  　<div className="flex flex-col md:flex-row min-h-[calc(100dvh-52px)] pb-24 md:pb-0">
+    　<aside className="w-full md:w-[240px] shrink-0 border-b md:border-b-0 md:border-r border-slate-200 bg-white p-3 md:p-4 min-h-0 md:min-h-[calc(100dvh-56px)]">
         <div className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-500">Time</div>
-        <div className="mt-2 flex flex-col gap-1">
+        <div className="mt-2 flex flex-row md:flex-col gap-1 overflow-x-auto">
           {TIME_FILTERS.map((f) => (
             <button
               key={f} type="button" onClick={() => setTimeFilter(f)}
@@ -471,9 +471,9 @@ export default function PlannerClient({
         </div>
 
         <div className="mt-6 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-500">Roles</div>
-        <div className="mt-2 flex flex-col gap-1">
+        <div className="mt-2 flex flex-row md:flex-col gap-1 overflow-x-auto">
           {JOB_KEYS.map((j) => (
-            <label key={j} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50">
+            <label key={j} className="flex shrink-0 items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50">
               <Checkbox checked={jobFilter.has(j)} onChange={() => toggleJob(j)} />
               <span className="text-[13px] text-slate-700">{JOB_LABELS[j]}</span>
               <span className="ml-auto font-mono text-[11px] text-slate-400">{jobCounts[j] ?? 0}</span>
@@ -482,9 +482,9 @@ export default function PlannerClient({
         </div>
 
         <div className="mt-6 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-500">Status</div>
-        <div className="mt-2 space-y-1">
+        <div className="mt-2 flex md:block gap-2 overflow-x-auto md:space-y-1">
           {Object.values(STATUS).map((s) => (
-            <div key={s.key} className="flex items-center gap-2 px-2.5 py-1 text-[12.5px]">
+            <div key={s.key} className="flex shrink-0 items-center gap-2 px-2.5 py-1 text-[12.5px]">
               <span className="w-2 h-2 rounded-full" style={{ background: s.swatch }} />
               <span className="text-slate-600">{s.label}</span>
               <span className="ml-auto font-mono text-[11px] text-slate-400">{statusCounts[s.key] ?? 0}</span>
@@ -503,8 +503,8 @@ export default function PlannerClient({
         </button>
       </aside>
 
-      <div className="flex-1 min-w-0 p-6">
-        <div className="flex items-center gap-3 mb-5 flex-wrap">
+      <div className="flex-1 min-w-0 p-4 md:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
           <div>
             <h1 className="text-[22px] font-semibold tracking-tight text-slate-900">
               {showBin ? 'Bin' : 'Planner'} <span className="text-slate-400">· {project.name}</span>
@@ -515,7 +515,7 @@ export default function PlannerClient({
                 : `${timeFilter} view · ${filteredTree.length} parent tasks · ${subtaskTotal} subtasks`}
             </div>
           </div>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="w-full sm:w-auto sm:ml-auto flex items-center gap-2 flex-wrap">
             <button
               type="button" onClick={() => setShowMembers(true)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 text-[13px] font-medium hover:bg-slate-50"

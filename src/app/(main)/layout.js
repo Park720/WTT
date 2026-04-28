@@ -21,7 +21,7 @@ export default async function MainLayout({ children }) {
     <TimerProvider>
       <div className="min-h-screen flex">
         <Sidebar user={{ id: user.id, name: user.name, email: user.email }} projects={projects} />
-        <div className="flex-1 min-w-0 flex flex-col">
+        <div className="flex-1 min-w-0 flex flex-col pb-20 md:pb-0">
           <Topbar />
           <main className="flex-1 min-w-0 page-enter">{children}</main>
         </div>

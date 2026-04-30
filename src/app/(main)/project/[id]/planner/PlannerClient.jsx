@@ -225,6 +225,19 @@ function MemberChecklistCard({ t, currentUser, isOwner, onRequestReview, onAppro
           <div className="mt-1 text-[11.5px] font-mono text-slate-500">
             #{t.id.slice(-5).toUpperCase()} {t.dueDate ? `· Due ${formatDue(t.dueDate)}` : ''} · {done}/{total} ({pct}%)
           </div>
+          <div className="mt-1.5 flex items-center gap-1.5">
+            <span className="text-[11.5px] text-slate-500">Assigned to</span>
+            {t.assignee ? (
+              <>
+                <Avatar user={t.assignee} size={20} />
+                <span className="text-[13.5px] font-medium text-slate-700 truncate max-w-[160px]">
+                  {t.assignee.name || t.assignee.email?.split('@')[0]}
+                </span>
+              </>
+            ) : (
+              <span className="text-[13.5px] italic text-slate-400">Unassigned</span>
+            )}
+          </div>
         </div>
         <div className="w-40 shrink-0"><ProgressBar value={pct} /></div>
       </div>
@@ -262,13 +275,24 @@ function MemberChecklistCard({ t, currentUser, isOwner, onRequestReview, onAppro
                 {isBlocked && <Icon.Lock className="w-3 h-3 inline mr-1 align-text-bottom text-slate-400" />}
                 {s.title}
               </span>
-              {s.assignee && <Avatar user={s.assignee} size={18} />}
               {isBlocked && blocker && (
                 <span className="font-mono text-[11px] text-slate-500">
                   Waiting: {truncate(blocker.blockerTitle, 26)}
                 </span>
               )}
               <span className="ml-auto flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 shrink-0">
+                  {s.assignee ? (
+                    <>
+                      <Avatar user={s.assignee} size={20} />
+                      <span className="hidden sm:inline text-[13.5px] text-slate-700 truncate max-w-[120px]">
+                        {s.assignee.name || s.assignee.email?.split('@')[0]}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-[13.5px] italic text-slate-400">Unassigned</span>
+                  )}
+                </span>
                 <StatusPill status={s.status} size="sm" />
                 <span className="font-mono text-[11px] text-slate-400">
                   {formatMinutes(s.loggedMinutes)} / {formatMinutes(s.estimatedMinutes)}

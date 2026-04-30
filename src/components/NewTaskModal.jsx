@@ -80,7 +80,7 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
             <input
               value={title} onChange={(e) => setTitle(e.target.value)}
               required autoFocus placeholder="What needs doing?"
-              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
+              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[14px] focus:outline-none focus:border-orange-400"
             />
           </div>
           <div>
@@ -90,7 +90,7 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
             <textarea
               value={description} onChange={(e) => setDescription(e.target.value)}
               rows={2} placeholder="Acceptance criteria, links, context…"
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13.5px] focus:outline-none focus:border-orange-400 resize-none"
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[14px] focus:outline-none focus:border-orange-400 resize-none"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -98,7 +98,7 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
               <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Priority</label>
               <select
                 value={priority} onChange={(e) => setPriority(e.target.value)}
-                className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
+                className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[14px] focus:outline-none focus:border-orange-400"
               >
                 {PRIORITY_KEYS.map((k) => <option key={k} value={k}>{PRIORITY[k].label}</option>)}
               </select>
@@ -108,7 +108,7 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
               <input
                 type="number" min="0" step="0.5"
                 value={estimatedHours} onChange={(e) => setEstimatedHours(e.target.value)}
-                placeholder="0" className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
+                placeholder="0" className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[14px] focus:outline-none focus:border-orange-400"
               />
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
                   setDueDate(e.target.value);
                   if (!e.target.value) setDueTime('');
                 }}
-                className="flex-1 min-w-0 h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
+                className="flex-1 min-w-0 h-10 rounded-xl border border-slate-200 bg-white px-3 text-[14px] focus:outline-none focus:border-orange-400"
               />
               <div className="shrink-0">
                 <input
@@ -132,7 +132,7 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
                   onChange={(e) => setDueTime(e.target.value)}
                   disabled={!dueDate}
                   aria-label="Due time (optional)"
-                  className="w-[112px] h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400 disabled:bg-slate-50 disabled:text-slate-400"
+                  className="w-[112px] h-10 rounded-xl border border-slate-200 bg-white px-3 text-[14px] focus:outline-none focus:border-orange-400 disabled:bg-slate-50 disabled:text-slate-400"
                 />
                 <div className="text-[10.5px] text-slate-400 mt-1 text-center">Time (optional)</div>
               </div>
@@ -142,7 +142,7 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
             <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Assignee</label>
             <select
               value={assigneeId} onChange={(e) => setAssigneeId(e.target.value)}
-              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
+              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[14px] focus:outline-none focus:border-orange-400"
             >
               <option value="">Unassigned</option>
               {members.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
@@ -154,10 +154,10 @@ export default function NewTaskModal({ projectId, parent, members = [], onClose,
           )}
 
           <div className="flex items-center gap-2 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 h-10 rounded-xl border border-slate-200 text-slate-700 text-[13.5px] font-medium hover:bg-slate-50">
+            <button type="button" onClick={onClose} className="flex-1 h-10 rounded-xl border border-slate-200 text-slate-700 text-[14px] font-medium hover:bg-slate-50">
               Cancel
             </button>
-            <button type="submit" disabled={loading} className="flex-1 h-10 rounded-xl bg-orange-500 text-white text-[13.5px] font-medium hover:bg-orange-600 disabled:opacity-60">
+            <button type="submit" disabled={loading} className="flex-1 h-10 rounded-xl bg-orange-500 text-white text-[14px] font-medium hover:bg-orange-600 disabled:opacity-60">
               {loading ? 'Creating…' : 'Create'}
             </button>
           </div>

@@ -47,7 +47,7 @@ function BlockedBanner({ blocker, onGoToBlocker }) {
       </span>
       <div className="min-w-0 flex-1">
         <div className="text-[11px] font-medium uppercase tracking-wider text-slate-500">Blocked by</div>
-        <div className="text-[13.5px] text-slate-900 font-medium truncate">{blocker?.blockerTitle ?? 'another task'}</div>
+        <div className="text-[14px] text-slate-900 font-medium truncate">{blocker?.blockerTitle ?? 'another task'}</div>
       </div>
       {blocker?.blockerTaskId && (
         <button
@@ -84,7 +84,7 @@ function SubtaskRow({ sub, onOpen }) {
           </svg>
         )}
       </span>
-      <span className={`flex-1 min-w-0 truncate text-[13px] ${isDone ? 'line-through text-slate-400' : 'text-slate-800'}`}>
+      <span className={`flex-1 min-w-0 truncate text-[13.5px] ${isDone ? 'line-through text-slate-400' : 'text-slate-800'}`}>
         {sub.isBlocked && <Icon.Lock className="w-3 h-3 inline mr-1 align-text-bottom text-slate-400" />}
         {sub.title}
       </span>
@@ -299,7 +299,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
             type="button"
             onClick={() => setEditMode(false)}
             disabled={busy}
-            className="h-10 px-4 rounded-xl border border-slate-200 text-slate-700 text-[13.5px] font-medium hover:bg-slate-50 disabled:opacity-60"
+            className="h-10 px-4 rounded-xl border border-slate-200 text-slate-700 text-[14px] font-medium hover:bg-slate-50 disabled:opacity-60"
           >
             Cancel
           </button>
@@ -307,7 +307,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
             type="button"
             onClick={saveEdit}
             disabled={busy || !edit.title.trim()}
-            className="ml-auto h-10 px-5 rounded-xl bg-orange-500 text-white text-[13.5px] font-medium hover:bg-orange-600 disabled:opacity-60"
+            className="ml-auto h-10 px-5 rounded-xl bg-orange-500 text-white text-[14px] font-medium hover:bg-orange-600 disabled:opacity-60"
           >
             {busy ? 'Saving…' : 'Save changes'}
           </button>
@@ -331,7 +331,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
           type="button"
           onClick={startEdit}
           disabled={busy}
-          className="h-10 px-3 rounded-xl border border-slate-200 text-slate-700 text-[13px] font-medium hover:bg-slate-50 disabled:opacity-60 inline-flex items-center gap-1.5"
+          className="h-10 px-3 rounded-xl border border-slate-200 text-slate-700 text-[13.5px] font-medium hover:bg-slate-50 disabled:opacity-60 inline-flex items-center gap-1.5"
         >
           <Icon.Settings className="w-3.5 h-3.5" /> Edit
         </button>
@@ -339,7 +339,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
           type="button"
           onClick={handleBin}
           disabled={busy}
-          className="h-10 px-3 rounded-xl border border-slate-200 text-slate-600 text-[13px] font-medium hover:bg-red-50 hover:text-red-600 hover:border-red-200 disabled:opacity-60 inline-flex items-center gap-1.5"
+          className="h-10 px-3 rounded-xl border border-slate-200 text-slate-600 text-[13.5px] font-medium hover:bg-red-50 hover:text-red-600 hover:border-red-200 disabled:opacity-60 inline-flex items-center gap-1.5"
         >
           <Icon.Bin className="w-3.5 h-3.5" /> Move to bin
         </button>
@@ -356,7 +356,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
             type="button"
             onClick={() => putStatus('IN_PROGRESS')}
             disabled={busy}
-            className="h-10 px-4 rounded-xl border border-slate-200 text-slate-700 text-[13.5px] font-medium hover:bg-slate-50 disabled:opacity-60"
+            className="h-10 px-4 rounded-xl border border-slate-200 text-slate-700 text-[14px] font-medium hover:bg-slate-50 disabled:opacity-60"
           >
             Reject
           </button>,
@@ -367,7 +367,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
             type="button"
             onClick={() => putStatus('DONE')}
             disabled={busy}
-            className="h-10 px-4 rounded-xl bg-emerald-500 text-white text-[13.5px] font-medium hover:bg-emerald-600 disabled:opacity-60 inline-flex items-center gap-1.5"
+            className="h-10 px-4 rounded-xl bg-emerald-500 text-white text-[14px] font-medium hover:bg-emerald-600 disabled:opacity-60 inline-flex items-center gap-1.5"
           >
             <Icon.Check className="w-3.5 h-3.5" /> Approve
           </button>,
@@ -380,7 +380,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
             type="button"
             onClick={() => putStatus('PENDING_REVIEW')}
             disabled={busy}
-            className="h-10 px-4 rounded-xl border border-orange-200 text-orange-700 bg-orange-50 hover:bg-orange-100 text-[13.5px] font-medium disabled:opacity-60"
+            className="h-10 px-4 rounded-xl border border-orange-200 text-orange-700 bg-orange-50 hover:bg-orange-100 text-[14px] font-medium disabled:opacity-60"
           >
             Request review
           </button>,
@@ -393,7 +393,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
             type="button"
             onClick={handleStartFocus}
             disabled={busy}
-            className="h-10 px-5 rounded-xl bg-orange-500 text-white text-[13.5px] font-semibold hover:bg-orange-600 disabled:opacity-60 inline-flex items-center gap-1.5 shadow-lift"
+            className="h-10 px-5 rounded-xl bg-orange-500 text-white text-[14px] font-semibold hover:bg-orange-600 disabled:opacity-60 inline-flex items-center gap-1.5 shadow-lift"
           >
             <Icon.Play className="w-3.5 h-3.5" /> Start focus session
           </button>,
@@ -493,9 +493,9 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
           {/* ── Scrollable body ────────────────────────────────────────── */}
           <div className="flex-1 overflow-y-auto nice-scroll">
             {loading && !task ? (
-              <div className="px-6 py-8 text-[13px] text-slate-400">Loading…</div>
+              <div className="px-6 py-8 text-[13.5px] text-slate-400">Loading…</div>
             ) : !task ? (
-              <div className="px-6 py-8 text-[13px] text-slate-500">Task not found.</div>
+              <div className="px-6 py-8 text-[13.5px] text-slate-500">Task not found.</div>
             ) : (
               <>
                 {/* Details */}
@@ -509,7 +509,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
                           onChange={(e) => setEdit((s) => ({ ...s, description: e.target.value }))}
                           rows={3}
                           placeholder="Acceptance criteria, links, context…"
-                          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] focus:outline-none focus:border-orange-400 resize-none"
+                          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13.5px] focus:outline-none focus:border-orange-400 resize-none"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-3">
@@ -518,7 +518,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
                           <select
                             value={edit.priority}
                             onChange={(e) => setEdit((s) => ({ ...s, priority: e.target.value }))}
-                            className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13px] focus:outline-none focus:border-orange-400"
+                            className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
                           >
                             {PRIORITY_KEYS.map((k) => <option key={k} value={k}>{PRIORITY[k].label}</option>)}
                           </select>
@@ -528,7 +528,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
                           <select
                             value={edit.assigneeId}
                             onChange={(e) => setEdit((s) => ({ ...s, assigneeId: e.target.value }))}
-                            className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13px] focus:outline-none focus:border-orange-400"
+                            className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
                           >
                             <option value="">Unassigned</option>
                             {members.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
@@ -544,7 +544,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
                                 const v = e.target.value;
                                 setEdit((s) => ({ ...s, dueDate: v, dueTime: v ? s.dueTime : '' }));
                               }}
-                              className="flex-1 min-w-0 h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13px] focus:outline-none focus:border-orange-400"
+                              className="flex-1 min-w-0 h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
                             />
                             <div className="shrink-0">
                               <input
@@ -554,7 +554,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
                                 onChange={(e) => setEdit((s) => ({ ...s, dueTime: e.target.value }))}
                                 disabled={!edit.dueDate}
                                 aria-label="Due time (optional)"
-                                className="w-[112px] h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13px] focus:outline-none focus:border-orange-400 disabled:bg-slate-50 disabled:text-slate-400"
+                                className="w-[112px] h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400 disabled:bg-slate-50 disabled:text-slate-400"
                               />
                               <div className="text-[10.5px] text-slate-400 mt-1 text-center">Time (optional)</div>
                             </div>
@@ -566,7 +566,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
                             type="number" min="0" step="0.5"
                             value={edit.estimatedHours}
                             onChange={(e) => setEdit((s) => ({ ...s, estimatedHours: e.target.value }))}
-                            className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13px] focus:outline-none focus:border-orange-400"
+                            className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
                           />
                         </div>
                       </div>
@@ -574,7 +574,7 @@ export default function TaskDetailModal({ projectId, taskId, onClose, onChange, 
                   ) : (
                     <div className="space-y-3">
                       {task.description ? (
-                        <p className="text-[13.5px] text-slate-700 leading-relaxed whitespace-pre-wrap">
+                        <p className="text-[14px] text-slate-700 leading-relaxed whitespace-pre-wrap">
                           {task.description}
                         </p>
                       ) : (

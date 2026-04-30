@@ -71,7 +71,7 @@ function InviteMemberModal({ projectId, onClose, onInvited }) {
               placeholder="colleague@team.co"
               required
               autoFocus
-              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
+              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[14px] focus:outline-none focus:border-orange-400"
             />
           </div>
           <div>
@@ -85,7 +85,7 @@ function InviteMemberModal({ projectId, onClose, onInvited }) {
     setJob(e.target.value);
   }
 }}
-              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
+              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[14px] focus:outline-none focus:border-orange-400"
             >
               {DEFAULT_ROLES.map((role) => (
                 <option key={role} value={role}>
@@ -100,7 +100,7 @@ function InviteMemberModal({ projectId, onClose, onInvited }) {
                 value={job}
                 onChange={(e) => setJob(e.target.value)}
                 placeholder="Enter custom role"
-                className="mt-2 w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
+                className="mt-2 w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[14px] focus:outline-none focus:border-orange-400"
               />
             )}
           </div>
@@ -113,14 +113,14 @@ function InviteMemberModal({ projectId, onClose, onInvited }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 h-10 rounded-xl border border-slate-200 text-slate-700 text-[13.5px] font-medium hover:bg-slate-50"
+              className="flex-1 h-10 rounded-xl border border-slate-200 text-slate-700 text-[14px] font-medium hover:bg-slate-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 h-10 rounded-xl bg-orange-500 text-white text-[13.5px] font-medium hover:bg-orange-600 disabled:opacity-60"
+              className="flex-1 h-10 rounded-xl bg-orange-500 text-white text-[14px] font-medium hover:bg-orange-600 disabled:opacity-60"
             >
               {loading ? 'Sending…' : 'Send invite'}
             </button>
@@ -202,7 +202,7 @@ const [isCustomMode, setIsCustomMode] = useState(
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-[13.5px] font-medium text-slate-900 truncate">
+          <span className="text-[14px] font-medium text-slate-900 truncate">
             {m.name}
           </span>
           <RoleBadge role={m.role} />
@@ -329,7 +329,7 @@ export default function MembersModal({
               <button
                 type="button"
                 onClick={() => setShowInvite(true)}
-                className="mt-4 w-full inline-flex items-center justify-center gap-1.5 h-10 rounded-xl bg-orange-500 text-white text-[13.5px] font-medium hover:bg-orange-600"
+                className="mt-4 w-full inline-flex items-center justify-center gap-1.5 h-10 rounded-xl bg-orange-500 text-white text-[14px] font-medium hover:bg-orange-600"
               >
                 <Icon.Plus className="w-3.5 h-3.5" /> Invite member
               </button>

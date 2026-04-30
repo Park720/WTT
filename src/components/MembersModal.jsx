@@ -54,7 +54,7 @@ function InviteMemberModal({ projectId, onClose, onInvited }) {
         <div className="flex items-start justify-between mb-4">
           <div>
             <h2 className="text-[18px] font-semibold">Invite member</h2>
-            <p className="text-[12.5px] text-slate-500 mt-0.5">They'll need an account first.</p>
+            <p className="text-[15px] text-slate-500 mt-0.5">They'll need an account first.</p>
           </div>
           <button type="button" onClick={onClose} className="p-1 rounded hover:bg-slate-100 text-slate-400">
             <Icon.X className="w-4 h-4" />
@@ -63,7 +63,7 @@ function InviteMemberModal({ projectId, onClose, onInvited }) {
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Email</label>
+            <label className="text-[14px] font-medium text-slate-700 mb-1.5 block">Email</label>
             <input
               type="email"
               value={email}
@@ -71,11 +71,11 @@ function InviteMemberModal({ projectId, onClose, onInvited }) {
               placeholder="colleague@team.co"
               required
               autoFocus
-              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[14px] focus:outline-none focus:border-orange-400"
+              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[16.5px] focus:outline-none focus:border-orange-400"
             />
           </div>
           <div>
-            <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Job role</label>
+            <label className="text-[14px] font-medium text-slate-700 mb-1.5 block">Job role</label>
             <select
               value={DEFAULT_ROLES.includes(job) ? job : "CUSTOM"}
               onChange={(e) => {
@@ -85,7 +85,7 @@ function InviteMemberModal({ projectId, onClose, onInvited }) {
     setJob(e.target.value);
   }
 }}
-              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[14px] focus:outline-none focus:border-orange-400"
+              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[16.5px] focus:outline-none focus:border-orange-400"
             >
               {DEFAULT_ROLES.map((role) => (
                 <option key={role} value={role}>
@@ -100,27 +100,27 @@ function InviteMemberModal({ projectId, onClose, onInvited }) {
                 value={job}
                 onChange={(e) => setJob(e.target.value)}
                 placeholder="Enter custom role"
-                className="mt-2 w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[14px] focus:outline-none focus:border-orange-400"
+                className="mt-2 w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[16.5px] focus:outline-none focus:border-orange-400"
               />
             )}
           </div>
 
           {error && (
-            <p className="text-[12px] text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
+            <p className="text-[14px] text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
           )}
 
           <div className="flex items-center gap-2 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 h-10 rounded-xl border border-slate-200 text-slate-700 text-[14px] font-medium hover:bg-slate-50"
+              className="flex-1 h-10 rounded-xl border border-slate-200 text-slate-700 text-[16.5px] font-medium hover:bg-slate-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 h-10 rounded-xl bg-orange-500 text-white text-[14px] font-medium hover:bg-orange-600 disabled:opacity-60"
+              className="flex-1 h-10 rounded-xl bg-orange-500 text-white text-[16.5px] font-medium hover:bg-orange-600 disabled:opacity-60"
             >
               {loading ? 'Sending…' : 'Send invite'}
             </button>
@@ -202,7 +202,7 @@ const [isCustomMode, setIsCustomMode] = useState(
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-[14px] font-medium text-slate-900 truncate">
+          <span className="text-[16.5px] font-medium text-slate-900 truncate">
             {m.name}
           </span>
           <RoleBadge role={m.role} />
@@ -241,7 +241,7 @@ const [isCustomMode, setIsCustomMode] = useState(
     handleJobUpdate(e.target.value);
   }
 }}
-            className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-[12px] focus:outline-none focus:border-orange-400 disabled:opacity-60"
+            className="h-8 rounded-lg border border-slate-200 bg-white px-2 text-[14px] focus:outline-none focus:border-orange-400 disabled:opacity-60"
           >
             <option value="">No job</option>
             {DEFAULT_ROLES.map((role) => (
@@ -259,7 +259,7 @@ const [isCustomMode, setIsCustomMode] = useState(
   onBlur={() => handleJobUpdate(customRole)}
   placeholder="Custom role"
   disabled={pendingJob}
-  className="h-8 w-[130px] rounded-lg border border-slate-200 bg-white px-2 text-[12px] focus:outline-none focus:border-orange-400 disabled:opacity-60"
+  className="h-8 w-[130px] rounded-lg border border-slate-200 bg-white px-2 text-[14px] focus:outline-none focus:border-orange-400 disabled:opacity-60"
 />
           )}
         </div>
@@ -315,7 +315,7 @@ export default function MembersModal({
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="text-[18px] font-semibold">Project members</h2>
-                <p className="text-[12.5px] text-slate-500 mt-0.5">
+                <p className="text-[15px] text-slate-500 mt-0.5">
                   {projectName} · {memberCount} {memberCount === 1 ? 'person' : 'people'}
                   {ownerCount > 0 && `, ${ownerCount} ${ownerCount === 1 ? 'manager' : 'managers'}`}
                 </p>
@@ -329,7 +329,7 @@ export default function MembersModal({
               <button
                 type="button"
                 onClick={() => setShowInvite(true)}
-                className="mt-4 w-full inline-flex items-center justify-center gap-1.5 h-10 rounded-xl bg-orange-500 text-white text-[14px] font-medium hover:bg-orange-600"
+                className="mt-4 w-full inline-flex items-center justify-center gap-1.5 h-10 rounded-xl bg-orange-500 text-white text-[16.5px] font-medium hover:bg-orange-600"
               >
                 <Icon.Plus className="w-3.5 h-3.5" /> Invite member
               </button>
@@ -348,7 +348,7 @@ export default function MembersModal({
               />
             ))}
             {members.length === 0 && (
-              <div className="p-6 text-center text-[12.5px] text-slate-500">No members yet.</div>
+              <div className="p-6 text-center text-[15px] text-slate-500">No members yet.</div>
             )}
           </div>
         </div>

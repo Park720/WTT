@@ -23,7 +23,7 @@ function StatCard({ label, value, unit, tone = 'slate' }) {
       <div className="text-[10.5px] uppercase tracking-wider font-medium text-slate-500">{label}</div>
       <div className="mt-1 flex items-baseline gap-1">
         <span className={`font-mono text-[28px] font-semibold tabular-nums ${tones[tone]}`}>{value}</span>
-        {unit && <span className="text-[12px] text-slate-500">{unit}</span>}
+        {unit && <span className="text-[14px] text-slate-500">{unit}</span>}
       </div>
     </div>
   );
@@ -202,7 +202,7 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
           <h1 className="text-[22px] font-semibold tracking-tight text-slate-900">
             Pomodoro <span className="text-slate-400">· {project.name}</span>
           </h1>
-          <div className="text-[12px] font-mono mt-0.5 text-slate-500">
+          <div className="text-[14px] font-mono mt-0.5 text-slate-500">
             Session {completedSessions + 1}/{TOTAL_SESSIONS} · focused on{' '}
             <span className="text-orange-600">{focusedTitle}</span>
           </div>
@@ -213,7 +213,7 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
               key={k}
               type="button"
               onClick={() => changeMode(k)}
-              className={`px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-colors
+              className={`px-3 py-1.5 rounded-lg text-[15px] font-medium transition-colors
                 ${mode === k ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
             >
               {m.label}
@@ -223,7 +223,7 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
       </div>
 
       {startError && (
-        <div className="mb-4 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-[12.5px] text-red-600">
+        <div className="mb-4 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-[15px] text-red-600">
           {startError}
         </div>
       )}
@@ -343,14 +343,14 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
                   <button
                     type="button"
                     onClick={() => endSession({ markDone: false })}
-                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-[13px] font-medium hover:bg-slate-50 disabled:opacity-50 transition-colors"
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-[15.5px] font-medium hover:bg-slate-50 disabled:opacity-50 transition-colors"
                   >
                     End session
                   </button>
                   <button
                     type="button"
                     onClick={() => endSession({ markDone: true })}
-                    className="flex-1 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-[13px] font-semibold hover:bg-emerald-700 hover:shadow-lift disabled:opacity-50 transition-all inline-flex items-center justify-center gap-1.5"
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-[15.5px] font-semibold hover:bg-emerald-700 hover:shadow-lift disabled:opacity-50 transition-all inline-flex items-center justify-center gap-1.5"
                   >
                     <Icon.Check className="w-3.5 h-3.5" /> End &amp; mark done
                   </button>
@@ -372,7 +372,7 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
               <button
                 type="button"
                 onClick={handlePickTask}
-                className="ml-auto text-[12px] font-medium px-3 py-1 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50"
+                className="ml-auto text-[14px] font-medium px-3 py-1 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50"
               >
                 Change
               </button>
@@ -394,7 +394,7 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
           <div className="rounded-2xl border bg-white border-slate-200 p-5">
             <div className="text-[11px] uppercase tracking-wider font-medium mb-3 text-slate-500">Up next</div>
             {upNext.length === 0 ? (
-              <p className="text-[12.5px] text-slate-400 italic">Nothing queued up for you right now.</p>
+              <p className="text-[15px] text-slate-400 italic">Nothing queued up for you right now.</p>
             ) : (
               <ul className="rt-none space-y-1">
                 {upNext.map((t) => (
@@ -404,7 +404,7 @@ export default function TimerClient({ project, tasks, preselectTaskId, currentUs
                       className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50"
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0" />
-                      <span className="text-[13px] text-slate-800 truncate">{t.title}</span>
+                      <span className="text-[15.5px] text-slate-800 truncate">{t.title}</span>
                       <span className="ml-auto font-mono text-[11px] text-slate-400">
                         {t.estimatedMinutes ? formatMinutes(t.estimatedMinutes) : '—'}
                       </span>

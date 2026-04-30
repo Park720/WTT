@@ -39,7 +39,7 @@
 
 .body {
   margin-top: 6px;
-  font-size: 14px;
+  font-size: 16.5px;
   line-height: 1.45;
   color: var(--slate-500);
 }
@@ -51,7 +51,7 @@
 
 .confirmLabel {
   margin-top: 1rem;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--slate-700);
   display: block;
@@ -65,7 +65,7 @@
   background: #fff;
   border-radius: var(--radius-xl);
   padding: 0 12px;
-  font-size: 13.5px;
+  font-size: 16px;
   font-family: var(--font-mono);
   color: var(--slate-900);
   transition: border-color var(--transition-fast);
@@ -78,7 +78,7 @@
 
 .error {
   margin-top: 12px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--red-600);
   background: var(--red-50);
   border: 1px solid var(--red-200);
@@ -97,7 +97,7 @@
 .deleteBtn {
   flex: 1;
   height: 40px;
-  font-size: 13.5px;
+  font-size: 16px;
   font-weight: 500;
   border-radius: var(--radius-xl);
   cursor: pointer;

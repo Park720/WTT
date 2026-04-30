@@ -47,7 +47,7 @@ function ToastItem({ toast }) {
   const IconCmp = s.Icon;
   return (
     <div
-      className={`px-4 py-2 rounded-xl shadow-lift-lg text-[13px] font-medium pointer-events-auto flex items-center gap-2 ${s.bg} ${s.text} page-enter`}
+      className={`px-4 py-2 rounded-xl shadow-lift-lg text-[15.5px] font-medium pointer-events-auto flex items-center gap-2 ${s.bg} ${s.text} page-enter`}
     >
       <IconCmp className="w-3.5 h-3.5 shrink-0" />
       <span>{toast.message}</span>

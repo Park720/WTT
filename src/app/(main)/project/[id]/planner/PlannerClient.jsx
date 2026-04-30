@@ -76,7 +76,7 @@ function ManagerCard({ t, onApprove, onReject, onBin, onAddSubtask, onOpenTask, 
               {t.dueDate ? `Due ${formatDue(t.dueDate)}` : 'No due date'}
             </span>
           </div>
-          <h3 className="text-[15px] font-semibold leading-snug text-slate-900">{t.title}</h3>
+          <h3 className="text-[18px] font-semibold leading-snug text-slate-900">{t.title}</h3>
           <div className="mt-1 flex items-center gap-2 flex-wrap">
             <StatusPill status={t.status} size="sm" />
             {t.job && <Tag tone="slate">{t.job}</Tag>}
@@ -104,7 +104,7 @@ function ManagerCard({ t, onApprove, onReject, onBin, onAddSubtask, onOpenTask, 
                   tabIndex={0}
                   onClick={stopThen(openRow)}
                   onKeyDown={keyboardClick(openRow)}
-                  className="flex items-center gap-2 text-[13.5px] text-amber-900 rounded-md px-1 py-0.5 cursor-pointer hover:bg-amber-100/60 focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:outline-none"
+                  className="flex items-center gap-2 text-[16px] text-amber-900 rounded-md px-1 py-0.5 cursor-pointer hover:bg-amber-100/60 focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:outline-none"
                 >
                   {s.assignee && <Avatar user={s.assignee} size={18} />}
                   <span className="truncate">{s.title}</span>
@@ -155,7 +155,7 @@ function ManagerCard({ t, onApprove, onReject, onBin, onAddSubtask, onOpenTask, 
                 <button
                   type="button"
                   onClick={stopThen(() => onOpenTask(s.id))}
-                  className="w-full flex items-center gap-2 rounded-lg px-2 py-1.5 text-[13.5px] bg-slate-50 hover:bg-slate-100 text-left"
+                  className="w-full flex items-center gap-2 rounded-lg px-2 py-1.5 text-[16px] bg-slate-50 hover:bg-slate-100 text-left"
                 >
                   <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: STATUS[s.status].swatch }} />
                   {s.assignee && <Avatar user={s.assignee} size={18} />}
@@ -178,7 +178,7 @@ function ManagerCard({ t, onApprove, onReject, onBin, onAddSubtask, onOpenTask, 
             );
           })}
           {unfinished.length === 0 && (
-            <li className="px-2 py-1.5 text-[13.5px] text-slate-400">🎉 Nothing pending. Approve & archive.</li>
+            <li className="px-2 py-1.5 text-[16px] text-slate-400">🎉 Nothing pending. Approve & archive.</li>
           )}
         </ul>
       </div>
@@ -246,7 +246,7 @@ function MemberChecklistCard({ t, currentUser, isOwner, onRequestReview, onAppro
               tabIndex={0}
               onClick={openSub}
               onKeyDown={keyboardClick(openSub)}
-              className={`flex items-center gap-3 pl-10 pr-4 py-2.5 text-[14px] border-b last:border-b-0 border-slate-100 relative cursor-pointer hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none
+              className={`flex items-center gap-3 pl-10 pr-4 py-2.5 text-[16.5px] border-b last:border-b-0 border-slate-100 relative cursor-pointer hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none
                 ${isBlocked ? 'opacity-60' : ''}`}
             >
               <span className="absolute left-4 top-1/2 w-4 h-px bg-slate-200" />
@@ -299,7 +299,7 @@ function MemberChecklistCard({ t, currentUser, isOwner, onRequestReview, onAppro
           );
         })}
         {t.subtasks.length === 0 && (
-          <li className="px-4 py-3 text-[13.5px] text-slate-400">No subtasks yet.</li>
+          <li className="px-4 py-3 text-[16px] text-slate-400">No subtasks yet.</li>
         )}
       </ul>
     </div>
@@ -311,8 +311,8 @@ function BinList({ tree, isOwner, onRestore }) {
   if (all.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-200 bg-white/40 p-10 text-center">
-        <div className="text-[14px] font-medium text-slate-700">Bin's empty.</div>
-        <div className="mt-1 text-[13.5px] text-slate-500">Deleted tasks will appear here.</div>
+        <div className="text-[16.5px] font-medium text-slate-700">Bin's empty.</div>
+        <div className="mt-1 text-[16px] text-slate-500">Deleted tasks will appear here.</div>
       </div>
     );
   }
@@ -320,7 +320,7 @@ function BinList({ tree, isOwner, onRestore }) {
     <div className="rounded-2xl border bg-white border-slate-200 overflow-hidden">
       <ul className="rt-none divide-y divide-slate-100">
         {all.map((t) => (
-          <li key={t.id} className="flex items-center gap-3 px-4 py-2.5 text-[14px]">
+          <li key={t.id} className="flex items-center gap-3 px-4 py-2.5 text-[16.5px]">
             <Icon.Bin className="w-3.5 h-3.5 text-slate-400" />
             <span className="text-slate-800 truncate">{t.title}</span>
             {t.assignee && <Avatar user={t.assignee} size={18} />}
@@ -553,7 +553,7 @@ export default function PlannerClient({
           {TIME_FILTERS.map((f) => (
             <button
               key={f} type="button" onClick={() => setTimeFilter(f)}
-              className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[14px]
+              className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[16.5px]
                 ${timeFilter === f ? 'bg-orange-50 text-orange-700' : 'text-slate-700 hover:bg-slate-50'}`}
             >
               <span>{f}</span>
@@ -576,7 +576,7 @@ export default function PlannerClient({
                 type="button"
                 onClick={() => toggleMember(currentUser.id)}
                 aria-pressed={meActive}
-                className={`flex items-center gap-2 px-2.5 py-2 rounded-lg text-[14px] border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400
+                className={`flex items-center gap-2 px-2.5 py-2 rounded-lg text-[16.5px] border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-400
                   ${meActive
                     ? 'bg-orange-50 text-orange-700 border-orange-200'
                     : 'border-transparent text-slate-700 hover:bg-slate-50'}`}
@@ -598,7 +598,7 @@ export default function PlannerClient({
                 type="button"
                 onClick={() => toggleMember(m.id)}
                 aria-pressed={active}
-                className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[14px] border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400
+                className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[16.5px] border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400
                   ${active
                     ? 'bg-slate-100 text-slate-900 border-slate-200'
                     : 'border-transparent text-slate-500 hover:bg-slate-50'}`}
@@ -630,14 +630,14 @@ export default function PlannerClient({
         <div className="mt-6 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-500">Roles</div>
         <div className="mt-2 flex flex-col gap-1">
           {projectRoles.length === 0 ? (
-            <div className="px-2.5 py-1.5 text-[12px] text-slate-400 italic">
+            <div className="px-2.5 py-1.5 text-[14px] text-slate-400 italic">
               No roles assigned yet.
             </div>
           ) : (
             projectRoles.map((j) => (
               <label key={j} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer hover:bg-slate-50">
                 <Checkbox checked={jobFilter.has(j)} onChange={() => toggleJob(j)} />
-                <span className="text-[14px] text-slate-700">{j}</span>
+                <span className="text-[16.5px] text-slate-700">{j}</span>
                 <span className="ml-auto font-mono text-[11px] text-slate-400">{jobCounts[j] ?? 0}</span>
               </label>
             ))
@@ -656,7 +656,7 @@ export default function PlannerClient({
         <div className="mt-6 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-slate-500">Status</div>
         <div className="mt-2 space-y-1">
           {Object.values(STATUS).map((s) => (
-            <div key={s.key} className="flex items-center gap-2 px-2.5 py-1 text-[13.5px]">
+            <div key={s.key} className="flex items-center gap-2 px-2.5 py-1 text-[16px]">
               <span className="w-2 h-2 rounded-full" style={{ background: s.swatch }} />
               <span className="text-slate-600">{s.label}</span>
               <span className="ml-auto font-mono text-[11px] text-slate-400">{statusCounts[s.key] ?? 0}</span>
@@ -666,7 +666,7 @@ export default function PlannerClient({
 
         <button
           type="button" onClick={() => setShowBin((v) => !v)}
-          className={`mt-6 w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-[14px] border
+          className={`mt-6 w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-[16.5px] border
             ${showBin ? 'bg-slate-900 text-white border-slate-900'
                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}
         >
@@ -681,7 +681,7 @@ export default function PlannerClient({
             <h1 className="text-[22px] font-semibold tracking-tight text-slate-900">
               {showBin ? 'Bin' : 'Planner'} <span className="text-slate-400">· {project.name}</span>
             </h1>
-            <div className="text-[12px] font-mono mt-0.5 text-slate-500">
+            <div className="text-[14px] font-mono mt-0.5 text-slate-500">
               {showBin
                 ? `${tree.length} binned · 30-day auto-purge`
                 : `${timeFilter} view · ${filteredTree.length} parent tasks · ${subtaskTotal} subtasks`}
@@ -690,7 +690,7 @@ export default function PlannerClient({
           <div className="ml-auto flex items-center gap-2">
             <button
               type="button" onClick={() => setShowMembers(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 text-[14px] font-medium hover:bg-orange-100 hover:border-orange-300 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 text-[13px] font-medium hover:bg-orange-100 hover:border-orange-300 transition-colors"
             >
               <Icon.User className="w-3.5 h-3.5" /> Members
               <span className="font-mono text-[11px] text-orange-600 ml-0.5">{currentMembers.length}</span>
@@ -698,7 +698,7 @@ export default function PlannerClient({
             {isOwner && !showBin && (
               <button
                 type="button" onClick={() => setNewTaskCtx({ parent: null })}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-500 text-white text-[14px] font-medium hover:bg-orange-600"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-500 text-white text-[16.5px] font-medium hover:bg-orange-600"
               >
                 <Icon.Plus className="w-3.5 h-3.5" /> New task
               </button>
@@ -713,7 +713,7 @@ export default function PlannerClient({
                   return (
                     <button
                       key={r.k} type="button" onClick={() => setRole(r.k)}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13.5px] font-medium
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[16px] font-medium
                         ${role === r.k ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
                     >
                       <IconCmp className="w-3.5 h-3.5" /> {r.label}
@@ -731,10 +731,10 @@ export default function PlannerClient({
           <BinList tree={tree} isOwner={isOwner} onRestore={restoreTask} />
         ) : filteredTree.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-200 bg-white/40 p-10 text-center">
-            <div className="text-[14px] font-medium text-slate-700">
+            <div className="text-[16.5px] font-medium text-slate-700">
               {tree.length === 0 ? 'No tasks yet.' : 'Nothing matches the current filters.'}
             </div>
-            <div className="mt-1 text-[13.5px] text-slate-500">
+            <div className="mt-1 text-[16px] text-slate-500">
               {tree.length === 0 && isOwner
                 ? 'Click "New task" to seed the plan.'
                 : tree.length === 0 ? 'Ask the project owner to add tasks.' : 'Try another job filter.'}

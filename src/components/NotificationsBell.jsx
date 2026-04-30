@@ -40,7 +40,7 @@ function NotificationRow({ n, onClick }) {
         <IconCmp className="w-4 h-4" />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[13px] leading-snug text-slate-800 line-clamp-2">{n.message}</p>
+        <p className="text-[15.5px] leading-snug text-slate-800 line-clamp-2">{n.message}</p>
         <p className="text-[11px] font-mono text-slate-400 mt-1">{timeAgo(n.createdAt)}</p>
       </div>
       {!n.isRead && (
@@ -56,7 +56,7 @@ function EmptyState() {
       <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 text-slate-400 mb-3">
         <Icon.Bell className="w-5 h-5" />
       </span>
-      <p className="text-[13px] font-medium text-slate-700">No notifications yet</p>
+      <p className="text-[15.5px] font-medium text-slate-700">No notifications yet</p>
       <p className="text-[11.5px] text-slate-500 mt-0.5">You'll see activity here once things happen.</p>
     </div>
   );
@@ -165,7 +165,7 @@ export default function NotificationsBell() {
       {open && (
         <div className="absolute right-0 top-full mt-2 w-[400px] rounded-2xl bg-white shadow-lift-lg border border-slate-200 overflow-hidden z-50">
           <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-            <h3 className="text-[14px] font-semibold text-slate-900">Notifications</h3>
+            <h3 className="text-[16.5px] font-semibold text-slate-900">Notifications</h3>
             {unreadCount > 0 && (
               <button
                 type="button"
@@ -178,7 +178,7 @@ export default function NotificationsBell() {
           </div>
           <div className="max-h-[500px] overflow-y-auto nice-scroll">
             {loading && notifs.length === 0 ? (
-              <div className="px-6 py-10 text-center text-[12.5px] text-slate-400">Loading…</div>
+              <div className="px-6 py-10 text-center text-[15px] text-slate-400">Loading…</div>
             ) : notifs.length === 0 ? (
               <EmptyState />
             ) : (

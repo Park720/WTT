@@ -121,7 +121,7 @@ function ProjectCard({ p, isOwner, onEdit, onShowExports, onDelete }) {
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-start gap-3 min-w-0">
           <span
-            className="w-9 h-9 inline-flex items-center justify-center rounded-xl text-[15px] font-semibold"
+            className="w-9 h-9 inline-flex items-center justify-center rounded-xl text-[18px] font-semibold"
             style={{ background: `${p.color}1a`, color: p.color }}
           >
             {p.name.slice(0, 1).toUpperCase()}
@@ -154,7 +154,7 @@ function ProjectCard({ p, isOwner, onEdit, onShowExports, onDelete }) {
                   type="button"
                   role="menuitem"
                   onClick={(e) => pickFromMenu(e, onEdit)}
-                  className="w-full h-10 px-3 flex items-center gap-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50"
+                  className="w-full h-10 px-3 flex items-center gap-2 text-[15.5px] font-medium text-slate-700 hover:bg-slate-50"
                 >
                   <Icon.Settings className="w-4 h-4 text-slate-500" />
                   Edit project
@@ -164,7 +164,7 @@ function ProjectCard({ p, isOwner, onEdit, onShowExports, onDelete }) {
                 type="button"
                 role="menuitem"
                 onClick={(e) => pickFromMenu(e, onShowExports)}
-                className="w-full h-10 px-3 flex items-center gap-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50"
+                className="w-full h-10 px-3 flex items-center gap-2 text-[15.5px] font-medium text-slate-700 hover:bg-slate-50"
               >
                 <Icon.Download className="w-4 h-4 text-slate-500" />
                 Recent exports
@@ -176,7 +176,7 @@ function ProjectCard({ p, isOwner, onEdit, onShowExports, onDelete }) {
                     type="button"
                     role="menuitem"
                     onClick={(e) => pickFromMenu(e, onDelete)}
-                    className="w-full h-10 px-3 flex items-center gap-2 text-[13px] font-medium text-red-600 hover:bg-red-50"
+                    className="w-full h-10 px-3 flex items-center gap-2 text-[15.5px] font-medium text-red-600 hover:bg-red-50"
                   >
                     <Icon.Bin className="w-4 h-4" />
                     Delete project
@@ -204,7 +204,7 @@ function ProjectCard({ p, isOwner, onEdit, onShowExports, onDelete }) {
       </div>
 
       <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2">
-        <span className="text-[12px] font-medium text-slate-700 group-hover:text-slate-900">Open →</span>
+        <span className="text-[14px] font-medium text-slate-700 group-hover:text-slate-900">Open →</span>
         <button
           type="button"
           onClick={handleExport}
@@ -250,22 +250,22 @@ function ExportsHistoryModal({ project, onClose }) {
         <div className="flex items-start justify-between mb-3">
           <div>
             <h2 className="text-[18px] font-semibold">Recent exports</h2>
-            <p className="text-[12.5px] text-slate-500 mt-0.5">{project.name}</p>
+            <p className="text-[15px] text-slate-500 mt-0.5">{project.name}</p>
           </div>
           <button type="button" onClick={onClose} className="p-1 rounded hover:bg-slate-100 text-slate-400">
             <Icon.X className="w-4 h-4" />
           </button>
         </div>
 
-        {error && <p className="text-[12px] text-red-600">{error}</p>}
-        {!logs && !error && <p className="text-[12.5px] text-slate-400">Loading…</p>}
+        {error && <p className="text-[14px] text-red-600">{error}</p>}
+        {!logs && !error && <p className="text-[15px] text-slate-400">Loading…</p>}
         {logs && logs.length === 0 && (
-          <p className="text-[12.5px] text-slate-500 italic">No exports yet. Hit the Export button on this card to create one.</p>
+          <p className="text-[15px] text-slate-500 italic">No exports yet. Hit the Export button on this card to create one.</p>
         )}
         {logs && logs.length > 0 && (
           <ul className="rt-none divide-y divide-slate-100">
             {logs.slice(0, 5).map((l) => (
-              <li key={l.id} className="py-2.5 flex items-center gap-3 text-[13px]">
+              <li key={l.id} className="py-2.5 flex items-center gap-3 text-[15.5px]">
                 <Icon.Download className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 <div className="min-w-0 flex-1">
                   <div className="text-slate-800 truncate">by {l.exportedBy.name}</div>
@@ -295,11 +295,11 @@ function EmptyProjectCard({ onClick }) {
       className="text-left rounded-2xl border-2 border-dashed border-slate-200 bg-white/40 p-5 hover-lift flex flex-col items-start"
     >
       <span className="text-2xl">✨</span>
-      <div className="mt-2 text-[14px] font-medium text-slate-700">Start your first project</div>
-      <div className="mt-1 text-[12px] text-slate-500">
+      <div className="mt-2 text-[16.5px] font-medium text-slate-700">Start your first project</div>
+      <div className="mt-1 text-[14px] text-slate-500">
         Drop a kickoff doc or type <kbd className="font-mono px-1 rounded bg-slate-100">/task</kbd> to seed the plan.
       </div>
-      <span className="mt-4 inline-flex items-center gap-1.5 text-[12px] text-orange-600 font-medium">
+      <span className="mt-4 inline-flex items-center gap-1.5 text-[14px] text-orange-600 font-medium">
         Start project <Icon.Arrow className="w-3.5 h-3.5" />
       </span>
     </button>
@@ -349,7 +349,7 @@ function NewProjectModal({ onClose, onCreated }) {
         <div className="flex items-start justify-between mb-4">
           <div>
             <h2 className="text-[18px] font-semibold">New project</h2>
-            <p className="text-[12.5px] text-slate-500 mt-0.5">You'll be the manager by default.</p>
+            <p className="text-[15px] text-slate-500 mt-0.5">You'll be the manager by default.</p>
           </div>
           <button
             type="button"
@@ -362,28 +362,28 @@ function NewProjectModal({ onClose, onCreated }) {
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Name</label>
+            <label className="text-[14px] font-medium text-slate-700 mb-1.5 block">Name</label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Orbital — Ground Control"
               required
               autoFocus
-              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[13.5px] focus:outline-none focus:border-orange-400"
+              className="w-full h-10 rounded-xl border border-slate-200 bg-white px-3 text-[16px] focus:outline-none focus:border-orange-400"
             />
           </div>
           <div>
-            <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Description <span className="text-slate-400">(optional)</span></label>
+            <label className="text-[14px] font-medium text-slate-700 mb-1.5 block">Description <span className="text-slate-400">(optional)</span></label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="What's this project about?"
               rows={2}
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13.5px] focus:outline-none focus:border-orange-400 resize-none"
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-[16px] focus:outline-none focus:border-orange-400 resize-none"
             />
           </div>
           <div>
-            <label className="text-[12px] font-medium text-slate-700 mb-1.5 block">Color</label>
+            <label className="text-[14px] font-medium text-slate-700 mb-1.5 block">Color</label>
             <div className="flex items-center gap-1.5">
               {COLOR_SWATCHES.map((c) => (
                 <button
@@ -399,21 +399,21 @@ function NewProjectModal({ onClose, onCreated }) {
           </div>
 
           {error && (
-            <p className="text-[12px] text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
+            <p className="text-[14px] text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
           )}
 
           <div className="flex items-center gap-2 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 h-10 rounded-xl border border-slate-200 text-slate-700 text-[13.5px] font-medium hover:bg-slate-50"
+              className="flex-1 h-10 rounded-xl border border-slate-200 text-slate-700 text-[16px] font-medium hover:bg-slate-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 h-10 rounded-xl bg-orange-500 text-white text-[13.5px] font-medium hover:bg-orange-600 disabled:opacity-60"
+              className="flex-1 h-10 rounded-xl bg-orange-500 text-white text-[16px] font-medium hover:bg-orange-600 disabled:opacity-60"
             >
               {loading ? 'Creating…' : 'Create project'}
             </button>
@@ -482,7 +482,7 @@ export default function DashboardClient({ user, projects }) {
       <div className="px-8 py-6 max-w-[1400px] mx-auto">
         <div className="flex items-end justify-between mb-2">
           <div>
-            <div className="text-[12px] font-mono text-slate-500">{dateLabel} · Week {week}</div>
+            <div className="text-[14px] font-mono text-slate-500">{dateLabel} · Week {week}</div>
             <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-slate-900">
               {greetingForHour(now.getHours())}, {firstName}.{' '}
               <span className="text-slate-400">
@@ -493,14 +493,14 @@ export default function DashboardClient({ user, projects }) {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 text-[13px]"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 text-[15.5px]"
             >
               <Icon.Filter className="w-3.5 h-3.5" /> Filter
             </button>
             <button
               type="button"
               onClick={() => setShowNew(true)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-500 text-white text-[13px] font-medium hover:bg-orange-600"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-orange-500 text-white text-[15.5px] font-medium hover:bg-orange-600"
             >
               <Icon.Plus className="w-3.5 h-3.5" /> New project
             </button>
@@ -513,7 +513,7 @@ export default function DashboardClient({ user, projects }) {
               <div className="text-[11px] font-medium uppercase tracking-wider text-slate-500">{kpi.k}</div>
               <div className="mt-1 flex items-baseline gap-2">
                 <span className="font-mono text-[28px] font-semibold text-slate-900">{kpi.v}</span>
-                <span className="text-[12px] text-slate-500">{kpi.sub}</span>
+                <span className="text-[14px] text-slate-500">{kpi.sub}</span>
               </div>
             </div>
           ))}
@@ -526,14 +526,14 @@ export default function DashboardClient({ user, projects }) {
                 key={f}
                 type="button"
                 onClick={() => setFilter(f)}
-                className={`px-3 py-1 rounded-lg text-[12.5px] font-medium transition-all
+                className={`px-3 py-1 rounded-lg text-[15px] font-medium transition-all
                   ${filter === f ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
               >
                 {f}
               </button>
             ))}
           </div>
-          <div className="ml-auto text-[12px] font-mono text-slate-500">
+          <div className="ml-auto text-[14px] font-mono text-slate-500">
             sorted by · recently updated
           </div>
         </div>
@@ -544,8 +544,8 @@ export default function DashboardClient({ user, projects }) {
           </div>
         ) : filtered.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-200 bg-white/40 p-10 text-center">
-            <div className="text-[14px] font-medium text-slate-700">Nothing matches &ldquo;{filter}&rdquo;.</div>
-            <div className="mt-1 text-[12.5px] text-slate-500">Try another filter.</div>
+            <div className="text-[16.5px] font-medium text-slate-700">Nothing matches &ldquo;{filter}&rdquo;.</div>
+            <div className="mt-1 text-[15px] text-slate-500">Try another filter.</div>
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

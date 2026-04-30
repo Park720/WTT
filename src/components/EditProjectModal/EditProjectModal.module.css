@@ -33,7 +33,7 @@
 }
 
 .subtitle {
-  font-size: 12.5px;
+  font-size: 15px;
   color: var(--slate-500);
   margin-top: 2px;
 }
@@ -60,7 +60,7 @@
 
 .label {
   display: block;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--slate-700);
   margin-bottom: 6px;
@@ -73,7 +73,7 @@
   background: #fff;
   border-radius: var(--radius-xl);
   padding: 0 12px;
-  font-size: 13.5px;
+  font-size: 16px;
   font-family: inherit;
   color: var(--slate-900);
   transition: border-color var(--transition-fast);
@@ -146,7 +146,7 @@
 
 .error {
   margin-top: 4px;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--red-600);
   background: var(--red-50);
   border: 1px solid var(--red-200);
@@ -165,7 +165,7 @@
 .submitBtn {
   flex: 1;
   height: 40px;
-  font-size: 13.5px;
+  font-size: 16px;
   font-weight: 500;
   border-radius: var(--radius-xl);
   cursor: pointer;

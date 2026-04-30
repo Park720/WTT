@@ -24,7 +24,7 @@
 
 .subtitle {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 0.125rem;
   color: var(--slate-500);
 }
@@ -49,7 +49,7 @@
 
 .viewBtn {
   padding: 0.25rem 0.75rem;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--slate-500);
   background: transparent;
@@ -105,7 +105,7 @@
 .monthLabel {
   padding: 0.375rem 0.75rem;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   border-left: 1px solid var(--slate-200);
   border-right: 1px solid var(--slate-200);
   color: var(--slate-700);
@@ -115,7 +115,7 @@
 
 .todayBtn {
   padding: 0.375rem 0.75rem;
-  font-size: 12.5px;
+  font-size: 15px;
   border: 1px solid var(--slate-200);
   border-radius: var(--radius-lg);
   color: var(--slate-700);
@@ -244,7 +244,7 @@
 .cellDay {
   text-align: right;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 15.5px;
   color: var(--slate-900);
   line-height: 1;
 }
@@ -407,7 +407,7 @@
   gap: 0.5rem;
   width: 100%;
   padding: 0.375rem 0.5rem;
-  font-size: 12px;
+  font-size: 14px;
   text-align: left;
   background: transparent;
   border: 0;
@@ -581,7 +581,7 @@
 
 .weekCardTitle {
   display: block;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--slate-900);
   overflow: hidden;
